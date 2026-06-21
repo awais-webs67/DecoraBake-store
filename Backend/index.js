@@ -123,6 +123,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
             for (const item of items) {
                 await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -(item.quantity || 1) } })
             }
+            invalidateProductsCache()
 
             // Increment promo usage
             if (metadata.promoCode) {
@@ -196,7 +197,7 @@ const getImageKitInstance = (settings) => {
 
 // Upload buffer → ImageKit, return URL. Falls back to local disk if ImageKit not configured.
 const uploadToImageKit = async (buffer, originalName, folder = 'decorabake') => {
-    const settings = await Settings.findOne().lean()
+    const settings = await getCachedSettings()
     const ik = getImageKitInstance(settings)
     if (!ik) {
         const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}${extname(originalName).toLowerCase()}`
@@ -213,7 +214,7 @@ const uploadToImageKit = async (buffer, originalName, folder = 'decorabake') => 
 const deleteFromImageKit = async (url) => {
     if (!url || !url.startsWith('https://ik.imagekit.io')) return
     try {
-        const settings = await Settings.findOne().lean()
+        const settings = await getCachedSettings()
         const ik = getImageKitInstance(settings)
         if (!ik) return
         const urlPath = new URL(url).pathname  // e.g. /xjbkaiwiu/decorabake/file.jpg
@@ -305,6 +306,51 @@ const seedSettingsFromEnv = async () => {
         await s.save()
         console.log('✅ Seeded settings from .env:', Object.keys(updates).join(', '))
     }
+}
+
+// ==================== IN-MEMORY CACHE FOR PERFORMANCE ====================
+const cache = {
+    settings: null,
+    settingsTime: 0,
+    slider: null,
+    sliderTime: 0,
+    testimonials: null,
+    testimonialsTime: 0,
+    categoriesTime: 0,
+    productsTime: 0
+}
+const CACHE_TTL = 300000 // 5 minutes TTL
+
+// Simple cache invalidation helper
+const invalidateCache = (key) => {
+    cache[key] = null
+    cache[key + 'Time'] = 0
+}
+
+// Invalidate pattern (for categories/products queries with parameters)
+const invalidatePatternCache = (prefix) => {
+    Object.keys(cache).forEach(k => {
+        if (k.startsWith(prefix)) {
+            delete cache[k]
+        }
+    })
+    if (prefix === 'categories') cache.categoriesTime = 0
+    if (prefix === 'products') cache.productsTime = 0
+}
+
+const invalidateCategoriesCache = () => invalidatePatternCache('categories')
+const invalidateProductsCache = () => invalidatePatternCache('products')
+
+// Settings Cache Wrapper
+const getCachedSettings = async (forceRefresh = false) => {
+    const now = Date.now()
+    if (!cache.settings || forceRefresh || (now - cache.settingsTime > CACHE_TTL)) {
+        let s = await Settings.findOne()
+        if (!s) s = await Settings.create({})
+        cache.settings = s.toObject()
+        cache.settingsTime = now
+    }
+    return cache.settings
 }
 
 // MongoDB Connection with retry and caching (optimized for Vercel/serverless)
@@ -600,6 +646,12 @@ const getImageUrl = (imagePath) => {
 // ==================== PRODUCTS ====================
 app.get('/api/products', async (req, res) => {
     try {
+        const cacheKey = `products_${JSON.stringify(req.query)}`
+        const now = Date.now()
+        if (cache[cacheKey] && (now - cache.productsTime < CACHE_TTL)) {
+            return res.json(cache[cacheKey])
+        }
+
         const { category, featured, search, limit = 50, sort = 'newest' } = req.query
         let query = { enabled: { $ne: false } }
 
@@ -646,7 +698,10 @@ app.get('/api/products', async (req, res) => {
                 images: (p.images || []).map(img => getImageUrl(img))
             }
         })
-        res.json({ products: mappedProducts, total: mappedProducts.length })
+        const responseData = { products: mappedProducts, total: mappedProducts.length }
+        cache[cacheKey] = responseData
+        cache.productsTime = now
+        res.json(responseData)
     } catch (err) { res.status(500).json({ error: err.message }) }
 })
 
@@ -691,7 +746,12 @@ app.get('/api/products/:id', async (req, res) => {
 })
 
 app.post('/api/products', adminMiddleware, async (req, res) => {
-    try { res.status(201).json(await Product.create(req.body)) }
+    try {
+        const newProduct = await Product.create(req.body)
+        invalidateProductsCache()
+        invalidateCategoriesCache()
+        res.status(201).json(newProduct)
+    }
     catch (err) { apiError(res, err) }
 })
 
@@ -704,6 +764,8 @@ app.put('/api/products/:id', adminMiddleware, async (req, res) => {
             const newSet = new Set(req.body.images)
             for (const img of old.images) { if (!newSet.has(img)) deleteFromImageKit(img) }
         }
+        invalidateProductsCache()
+        invalidateCategoriesCache()
         res.json(updated)
     } catch (err) { apiError(res, err) }
 })
@@ -713,6 +775,8 @@ app.delete('/api/products/:id', adminMiddleware, async (req, res) => {
         const product = await Product.findById(req.params.id)
         await Product.findByIdAndDelete(req.params.id)
         if (product?.images?.length) product.images.forEach(img => deleteFromImageKit(img))
+        invalidateProductsCache()
+        invalidateCategoriesCache()
         res.json({ success: true })
     } catch (err) { apiError(res, err) }
 })
@@ -726,6 +790,8 @@ app.post('/api/admin/products/bulk-delete', adminMiddleware, async (req, res) =>
         for (const p of products) {
             if (p.images?.length) p.images.forEach(img => deleteFromImageKit(img))
         }
+        invalidateProductsCache()
+        invalidateCategoriesCache()
         res.json({ success: true, message: `${ids.length} products deleted` })
     } catch (err) { apiError(res, err) }
 })
@@ -821,6 +887,8 @@ app.post('/api/admin/products/import', adminMiddleware, uploadCsv.single('file')
             }
         }
         if (currentProduct) await Product.create(currentProduct)
+        invalidateProductsCache()
+        invalidateCategoriesCache()
 
         res.json({ success: true, message: `Imported successfully` })
     } catch (err) { apiError(res, err) }
@@ -830,17 +898,40 @@ app.post('/api/admin/products/import', adminMiddleware, uploadCsv.single('file')
 app.get('/api/categories', async (req, res) => {
     try {
         const { showOnHome, showInNav } = req.query
+        const cacheKey = `categories_${showOnHome}_${showInNav}`
+        const now = Date.now()
+
+        if (cache[cacheKey] && (now - cache.categoriesTime < CACHE_TTL)) {
+            return res.json(cache[cacheKey])
+        }
+
         let query = {}
         if (showOnHome === 'true') query.showOnHome = true
         if (showInNav === 'true') query.showInNav = true
 
         const cats = await Category.find(query).sort({ order: 1 }).lean()
-        const result = await Promise.all(cats.map(async c => ({
+        
+        // Single aggregation to group and count products by categoryId in one go
+        const productCounts = await Product.aggregate([
+            { $match: { enabled: { $ne: false } } },
+            { $group: { _id: '$categoryId', count: { $sum: 1 } } }
+        ])
+        const countMap = {}
+        productCounts.forEach(pc => {
+            if (pc._id) {
+                countMap[pc._id.toString()] = pc.count
+            }
+        })
+
+        const result = cats.map(c => ({
             ...c,
             id: c._id,
             image: getImageUrl(c.image),
-            productCount: await Product.countDocuments({ categoryId: c._id.toString() })
-        })))
+            productCount: countMap[c._id.toString()] || 0
+        }))
+
+        cache[cacheKey] = result
+        cache.categoriesTime = now
         res.json(result)
     } catch (err) { res.status(500).json({ error: err.message }) }
 })
@@ -854,7 +945,11 @@ app.get('/api/categories/:slug', async (req, res) => {
 })
 
 app.post('/api/categories', adminMiddleware, async (req, res) => {
-    try { const c = await Category.create(req.body); res.status(201).json({ ...c.toObject(), id: c._id }) }
+    try {
+        const c = await Category.create(req.body)
+        invalidateCategoriesCache()
+        res.status(201).json({ ...c.toObject(), id: c._id })
+    }
     catch (err) { apiError(res, err) }
 })
 
@@ -863,6 +958,8 @@ app.put('/api/categories/:id', adminMiddleware, async (req, res) => {
         const old = await Category.findById(req.params.id)
         const c = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true })
         if (old?.image && req.body.image && old.image !== req.body.image) deleteFromImageKit(old.image)
+        invalidateCategoriesCache()
+        invalidateProductsCache()
         res.json({ ...c.toObject(), id: c._id })
     } catch (err) { apiError(res, err) }
 })
@@ -872,6 +969,8 @@ app.delete('/api/categories/:id', adminMiddleware, async (req, res) => {
         const cat = await Category.findById(req.params.id)
         await Category.findByIdAndDelete(req.params.id)
         if (cat?.image) deleteFromImageKit(cat.image)
+        invalidateCategoriesCache()
+        invalidateProductsCache()
         res.json({ success: true })
     } catch (err) { apiError(res, err) }
 })
@@ -901,10 +1000,11 @@ app.post('/api/orders', async (req, res) => {
 
         const order = await Order.create(orderData)
         for (const item of req.body.items || []) await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -(item.quantity || 1) } })
+        invalidateProductsCache()
         if (req.body.promoCode) await PromoCode.findOneAndUpdate({ code: req.body.promoCode.toUpperCase() }, { $inc: { usageCount: 1 } })
 
         // Send order confirmation email to customer
-        const settings = await Settings.findOne()
+        const settings = await getCachedSettings()
         try {
             if (settings) await sendOrderConfirmation(settings, order)
         } catch (emailErr) { console.error('Order email error:', emailErr.message) }
@@ -1585,35 +1685,67 @@ app.post('/api/promo-codes/validate', async (req, res) => {
 
 // ==================== TESTIMONIALS ====================
 app.get('/api/testimonials', async (req, res) => {
-    try { res.json((await Testimonial.find({ enabled: { $ne: false } }).sort({ createdAt: -1 }).lean()).map(t => ({ ...t, id: t._id }))) }
-    catch (err) { res.status(500).json({ error: err.message }) }
+    try {
+        const now = Date.now()
+        if (cache.testimonials && (now - cache.testimonialsTime < CACHE_TTL)) {
+            return res.json(cache.testimonials)
+        }
+        const testimonials = await Testimonial.find({ enabled: { $ne: false } }).sort({ createdAt: -1 }).lean()
+        const result = testimonials.map(t => ({ ...t, id: t._id }))
+        cache.testimonials = result
+        cache.testimonialsTime = now
+        res.json(result)
+    } catch (err) { res.status(500).json({ error: err.message }) }
 })
 
 app.post('/api/testimonials', adminMiddleware, async (req, res) => {
-    try { const t = await Testimonial.create(req.body); res.status(201).json({ ...t.toObject(), id: t._id }) }
+    try {
+        const t = await Testimonial.create(req.body)
+        invalidateCache('testimonials')
+        res.status(201).json({ ...t.toObject(), id: t._id })
+    }
     catch (err) { apiError(res, err) }
 })
 
 app.put('/api/testimonials/:id', adminMiddleware, async (req, res) => {
-    try { const t = await Testimonial.findByIdAndUpdate(req.params.id, req.body, { new: true }); res.json({ ...t.toObject(), id: t._id }) }
+    try {
+        const t = await Testimonial.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        invalidateCache('testimonials')
+        res.json({ ...t.toObject(), id: t._id })
+    }
     catch (err) { apiError(res, err) }
 })
 
 app.delete('/api/testimonials/:id', adminMiddleware, async (req, res) => {
-    try { await Testimonial.findByIdAndDelete(req.params.id); res.json({ success: true }) }
+    try {
+        await Testimonial.findByIdAndDelete(req.params.id)
+        invalidateCache('testimonials')
+        res.json({ success: true })
+    }
     catch (err) { apiError(res, err) }
 })
 
 // ==================== SLIDER ====================
 app.get('/api/slider', async (req, res) => {
     try {
+        const now = Date.now()
+        if (cache.slider && (now - cache.sliderTime < CACHE_TTL)) {
+            return res.json(cache.slider)
+        }
         const slides = await Slider.find().sort({ order: 1 }).lean()
-        res.json(slides.map(s => ({ ...s, id: s._id, image: getImageUrl(s.image) })))
+        const result = slides.map(s => ({ ...s, id: s._id, image: getImageUrl(s.image) }))
+        cache.slider = result
+        cache.sliderTime = now
+        res.json(result)
     } catch (err) { res.status(500).json({ error: err.message }) }
 })
 
 app.post('/api/slider', adminMiddleware, async (req, res) => {
-    try { const s = await Slider.create(req.body); res.status(201).json({ ...s.toObject(), id: s._id, image: getImageUrl(s.image) }) }
+    try {
+        const s = await Slider.create(req.body)
+        invalidateCache('slider')
+        res.status(201).json({ ...s.toObject(), id: s._id, image: getImageUrl(s.image) })
+    }
     catch (err) { apiError(res, err) }
 })
 
@@ -1622,6 +1754,7 @@ app.put('/api/slider/:id', adminMiddleware, async (req, res) => {
         const old = await Slider.findById(req.params.id)
         const s = await Slider.findByIdAndUpdate(req.params.id, req.body, { new: true })
         if (old?.image && req.body.image && old.image !== req.body.image) deleteFromImageKit(old.image)
+        invalidateCache('slider')
         res.json({ ...s.toObject(), id: s._id, image: getImageUrl(s.image) })
     } catch (err) { apiError(res, err) }
 })
@@ -1631,6 +1764,7 @@ app.delete('/api/slider/:id', adminMiddleware, async (req, res) => {
         const slider = await Slider.findById(req.params.id)
         await Slider.findByIdAndDelete(req.params.id)
         if (slider?.image) deleteFromImageKit(slider.image)
+        invalidateCache('slider')
         res.json({ success: true })
     } catch (err) { apiError(res, err) }
 })
@@ -1638,9 +1772,7 @@ app.delete('/api/slider/:id', adminMiddleware, async (req, res) => {
 // ==================== SETTINGS ====================
 app.get('/api/settings', async (req, res) => {
     try {
-        let s = await Settings.findOne()
-        if (!s) s = await Settings.create({})
-        const settingsObj = s.toObject()
+        const settingsObj = await getCachedSettings()
         // Remove sensitive fields from public response
         const { adminPassword, geminiApiKey, longcatApiKey, qwenApiKey, openRouterApiKey, smtpPassword, smtpUser, smtpHost, smtpPort, smtpSecure, emailFrom, adminEmail, adminNotificationEmail, backupEmail, imagekitPrivateKey, ...pub } = settingsObj
         res.json(pub)
@@ -1649,21 +1781,25 @@ app.get('/api/settings', async (req, res) => {
 
 app.get('/api/admin/settings', adminMiddleware, async (req, res) => {
     try {
-        let s = await Settings.findOne()
-        if (!s) s = await Settings.create({})
-        res.json(s)
+        const settingsObj = await getCachedSettings()
+        res.json(settingsObj)
     } catch (err) { apiError(res, err) }
 })
 
 app.put('/api/settings', adminMiddleware, async (req, res) => {
     try {
         let s = await Settings.findOne()
-        if (!s) { s = await Settings.create(req.body); return res.json({ success: true }) }
+        if (!s) {
+            s = await Settings.create(req.body)
+            await getCachedSettings(true) // invalidate & reload
+            return res.json({ success: true })
+        }
         // Delete old logo/favicon from ImageKit if replaced
         if (req.body.siteLogo && s.siteLogo && req.body.siteLogo !== s.siteLogo) deleteFromImageKit(s.siteLogo)
         if (req.body.footerLogo && s.footerLogo && req.body.footerLogo !== s.footerLogo) deleteFromImageKit(s.footerLogo)
         Object.assign(s, req.body)
         await s.save()
+        await getCachedSettings(true) // invalidate & reload
         res.json({ success: true })
     } catch (err) { apiError(res, err) }
 })

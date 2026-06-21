@@ -99,8 +99,8 @@ function SearchOverlay({ isOpen, onClose }) {
                         style={styles.input}
                         autoFocus={isOpen}
                     />
-                    <button type="button" onClick={onClose} style={styles.closeBtn}>
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <button type="button" onClick={onClose} style={styles.closeBtn} className="search-overlay-close-btn" title="Close search">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
                     </button>
@@ -186,14 +186,20 @@ function SearchOverlay({ isOpen, onClose }) {
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
                 @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
                 
+                .search-overlay-close-btn:hover {
+                    background: #6B2346 !important;
+                    color: #fff !important;
+                }
+
                 @media (max-width: 768px) {
                     .search-overlay-container {
-                        width: 100% !important;
-                        max-width: 100% !important;
-                        height: 100% !important;
-                        max-height: 100vh !important;
-                        margin: 0 !important;
-                        border-radius: 0 !important;
+                        width: 92% !important;
+                        max-width: 600px !important;
+                        margin: 20px auto 0 !important;
+                        border-radius: 16px !important;
+                        height: auto !important;
+                        max-height: 85vh !important;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
                     }
                     .search-overlay-form {
                         padding: 14px 16px !important;
@@ -216,7 +222,21 @@ const styles = {
     searchForm: { display: 'flex', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid #f0f0f0', gap: '12px' },
     searchIcon: { flexShrink: 0 },
     input: { flex: 1, border: 'none', outline: 'none', fontSize: '18px', fontWeight: '400', color: '#222', background: 'transparent' },
-    closeBtn: { background: 'none', border: 'none', cursor: 'pointer', color: '#999', padding: '4px', display: 'flex' },
+    closeBtn: {
+        background: '#FCE8ED',
+        border: 'none',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        color: '#6B2346',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: '8px',
+        transition: 'all 0.2s ease',
+        width: '38px',
+        height: '38px',
+        flexShrink: 0
+    },
     resultsContainer: { overflow: 'auto', padding: '20px 24px', flex: 1 },
     loading: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '40px 0', color: '#888' },
     spinner: { width: '20px', height: '20px', border: '3px solid #eee', borderTopColor: '#6B2346', borderRadius: '50%', animation: 'spin 0.6s linear infinite' },

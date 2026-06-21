@@ -71,9 +71,11 @@ function SocialProof() {
             })
     }, [])
 
-    // Loop through notifications
+    // Loop through notifications with randomized delays (e.g., 2 to 5 minutes)
     useEffect(() => {
         if (dismissed) return
+
+        let timerId = null
 
         const showNotification = () => {
             if (productsList.length === 0) return
@@ -104,17 +106,20 @@ function SocialProof() {
             }, 6000)
         }
 
-        // Show first notification after 6 seconds on initial load
-        const firstTimer = setTimeout(showNotification, 6000)
+        const triggerNext = (delay) => {
+            timerId = setTimeout(() => {
+                showNotification()
+                // Random delay for next popup: between 2 minutes (120000ms) and 5 minutes (300000ms)
+                const nextDelay = 120000 + Math.random() * 180000
+                triggerNext(nextDelay)
+            }, delay)
+        }
 
-        // Then repeat every 25-45 seconds
-        const interval = setInterval(() => {
-            if (!dismissed) showNotification()
-        }, 25000 + Math.random() * 20000)
+        // Show first notification after 40 seconds on initial load
+        triggerNext(40000)
 
         return () => {
-            clearTimeout(firstTimer)
-            clearInterval(interval)
+            if (timerId) clearTimeout(timerId)
         }
     }, [dismissed, productsList])
 

@@ -228,7 +228,13 @@ const deleteFromImageKit = async (url) => {
 
 // Local fallback uploads dir (used when ImageKit not configured)
 const uploadsDir = join(__dirname, 'uploads')
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true })
+try {
+    if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true })
+    }
+} catch (err) {
+    console.warn('Warning: Could not create local uploads directory (running on read-only serverless environment):', err.message)
+}
 app.use('/uploads', express.static(uploadsDir))
 
 // File upload config with type validation

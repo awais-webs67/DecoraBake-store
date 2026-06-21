@@ -307,26 +307,64 @@ const seedSettingsFromEnv = async () => {
     }
 }
 
-// MongoDB Connection with retry
-const connectDB = async (retries = 10) => {
-    for (let i = 0; i < retries; i++) {
-        try {
-            await mongoose.connect(process.env.MONGODB_URI)
-            console.log('✅ MongoDB connected!')
-            if (!(await Settings.findOne())) await Settings.create({})
-            await seedSettingsFromEnv()
-            return
-        } catch (err) {
-            console.error(`❌ MongoDB error (attempt ${i + 1}/${retries}):`, err.message)
-            if (i < retries - 1) {
-                console.log('⏳ Retrying in 5 seconds...')
-                await new Promise(r => setTimeout(r, 5000))
-            }
-        }
+// MongoDB Connection with retry and caching (optimized for Vercel/serverless)
+let cachedConnection = null
+let dbConnectingPromise = null
+
+const connectDB = async () => {
+    if (mongoose.connection.readyState === 1) {
+        return mongoose.connection
     }
-    console.error('❌ Could not connect to MongoDB after all retries. Server will continue running without DB.')
+    if (dbConnectingPromise) {
+        return dbConnectingPromise
+    }
+
+    const options = {
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+    }
+
+    dbConnectingPromise = mongoose.connect(process.env.MONGODB_URI, options)
+        .then(async (m) => {
+            console.log('✅ MongoDB connected!')
+            cachedConnection = m
+            dbConnectingPromise = null
+            
+            // Seed settings in a non-blocking way to keep connection times low
+            Settings.findOne().then(async (s) => {
+                if (!s) await Settings.create({})
+                await seedSettingsFromEnv()
+            }).catch(err => {
+                console.error('Settings initialization error:', err.message)
+            })
+
+            return m
+        })
+        .catch((err) => {
+            console.error('❌ MongoDB connection error:', err.message)
+            dbConnectingPromise = null
+            throw err
+        })
+
+    return dbConnectingPromise
 }
-connectDB()
+
+// Initial connection attempt (non-blocking)
+connectDB().catch(() => {})
+
+// Middleware to ensure DB connection is ready before processing API requests
+app.use(async (req, res, next) => {
+    try {
+        if (mongoose.connection.readyState !== 1) {
+            await connectDB()
+        }
+        next()
+    } catch (err) {
+        console.error('Database connection middleware error:', err.message)
+        res.status(500).json({ error: 'Database connection failed' })
+    }
+})
 
 // ==================== USER AUTH ====================
 app.post('/api/users/register', async (req, res) => {

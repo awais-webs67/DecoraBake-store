@@ -1,7 +1,8 @@
 // API Configuration for Frontend
 // Reads from environment variable VITE_API_URL
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const API_BASE_URL = rawApiUrl.endsWith('/') ? rawApiUrl.slice(0, -1) : rawApiUrl
 
 export default API_BASE_URL
 

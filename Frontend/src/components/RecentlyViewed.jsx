@@ -67,12 +67,12 @@ function RecentlyViewed({ exclude }) {
                 gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : width < 992 ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
                 gap: '16px'
             }}>
-                {products.map(p => {
-                    const pId = p.id || p._id
+                {products.map((p, index) => {
+                    const pId = p.id || p._id || `recent_${index}`
                     const img = p.image || '/placeholder.svg'
                     const hasDiscount = p.salePrice && p.salePrice > 0 && p.salePrice < p.price
                     return (
-                        <Link key={pId} to={`/product/${pId}`} style={{ textDecoration: 'none' }}>
+                        <Link key={pId} to={`/product/${p.id || p._id}`} style={{ textDecoration: 'none' }}>
                             <div style={{
                                 background: '#fff', borderRadius: '12px', overflow: 'hidden',
                                 border: '1px solid #f0f0f0', transition: 'transform 0.2s, box-shadow 0.2s'

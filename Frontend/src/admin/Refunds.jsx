@@ -8,6 +8,8 @@ function Refunds() {
     const [selectedRefund, setSelectedRefund] = useState(null)
     const [filterStatus, setFilterStatus] = useState('')
     const [newMessage, setNewMessage] = useState('')
+    const [replyImages, setReplyImages] = useState([])
+    const [uploadingImages, setUploadingImages] = useState(false)
     const [updating, setUpdating] = useState(false)
 
     useEffect(() => {
@@ -35,13 +37,39 @@ function Refunds() {
         setUpdating(false)
     }
 
+    const handleImageUpload = async (e) => {
+        const files = Array.from(e.target.files)
+        if (files.length === 0) return
+        if (replyImages.length + files.length > 3) {
+            alert('Maximum 3 images allowed per message.')
+            return
+        }
+
+        setUploadingImages(true)
+        const formData = new FormData()
+        files.forEach(f => formData.append('files', f))
+
+        try {
+            const data = await adminApi.upload('/api/upload/multiple', formData)
+            if (data.urls) {
+                setReplyImages(prev => [...prev, ...data.urls])
+            } else {
+                alert(data.error || 'Upload failed')
+            }
+        } catch (err) {
+            alert('Upload error: ' + err.message)
+        }
+        setUploadingImages(false)
+    }
+
     const sendMessage = async () => {
-        if (!newMessage.trim()) return alert('Please enter a message')
+        if (!newMessage.trim() && replyImages.length === 0) return alert('Please enter a message or attach an image')
         setUpdating(true)
         try {
-            await adminApi.post(`/api/refunds/${selectedRefund.id}/message`, { message: newMessage, from: 'admin', sendEmail: true })
+            await adminApi.post(`/api/refunds/${selectedRefund.id}/message`, { message: newMessage, from: 'admin', sendEmail: true, images: replyImages })
             alert('✓ Message sent and email delivered to customer!')
             setNewMessage('')
+            setReplyImages([])
             fetchRefunds()
             const updated = await adminApi.get('/api/refunds')
             const current = updated.find(r => r.id === selectedRefund.id)
@@ -60,7 +88,8 @@ function Refunds() {
             reviewing: { bg: '#E3F2FD', text: '#1565C0' },
             approved: { bg: '#E8F5E9', text: '#2E7D32' },
             denied: { bg: '#FFEBEE', text: '#C62828' },
-            processed: { bg: '#E8F5E9', text: '#1B5E20' }
+            completed: { bg: '#E8F5E9', text: '#1B5E20' },
+            processed: { bg: '#E8F5E9', text: '#1B5E20' } // Fallback
         }
         return colors[status] || { bg: '#f0f0f0', text: '#666' }
     }
@@ -86,7 +115,7 @@ function Refunds() {
         modalTitle: { fontSize: '22px', fontWeight: '600', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' },
         section: { marginBottom: '24px' },
         sectionTitle: { fontSize: '14px', fontWeight: '600', color: '#888', textTransform: 'uppercase', marginBottom: '12px' },
-        infoGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' },
+        infoGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' },
         infoItem: { background: '#f8f8f8', padding: '14px', borderRadius: '10px' },
         infoLabel: { fontSize: '12px', color: '#888', marginBottom: '4px' },
         infoValue: { fontSize: '14px', fontWeight: '500', color: '#222' },
@@ -104,7 +133,7 @@ function Refunds() {
         total: refunds.length,
         pending: refunds.filter(r => r.status === 'pending').length,
         reviewing: refunds.filter(r => r.status === 'reviewing').length,
-        approved: refunds.filter(r => r.status === 'approved' || r.status === 'processed').length
+        approved: refunds.filter(r => r.status === 'approved' || r.status === 'completed' || r.status === 'processed').length
     }
 
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>
@@ -112,7 +141,7 @@ function Refunds() {
     return (
         <div style={styles.page}>
             <div style={styles.header}>
-                <h1 style={styles.title}>💰 Refund Requests</h1>
+                <h1 style={styles.title}>💰 Refund & Return Requests</h1>
                 <div style={styles.filters}>
                     <select style={styles.select} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
                         <option value="">All Requests</option>
@@ -120,7 +149,7 @@ function Refunds() {
                         <option value="reviewing">Under Review</option>
                         <option value="approved">Approved</option>
                         <option value="denied">Denied</option>
-                        <option value="processed">Processed</option>
+                        <option value="completed">Completed</option>
                     </select>
                 </div>
             </div>
@@ -130,7 +159,7 @@ function Refunds() {
                 <div style={styles.statCard}><div style={styles.statValue}>{refundStats.total}</div><div style={styles.statLabel}>Total Requests</div></div>
                 <div style={styles.statCard}><div style={{ ...styles.statValue, color: '#E65100' }}>{refundStats.pending}</div><div style={styles.statLabel}>Pending</div></div>
                 <div style={styles.statCard}><div style={{ ...styles.statValue, color: '#1565C0' }}>{refundStats.reviewing}</div><div style={styles.statLabel}>Under Review</div></div>
-                <div style={styles.statCard}><div style={{ ...styles.statValue, color: '#2E7D32' }}>{refundStats.approved}</div><div style={styles.statLabel}>Approved/Processed</div></div>
+                <div style={styles.statCard}><div style={{ ...styles.statValue, color: '#2E7D32' }}>{refundStats.approved}</div><div style={styles.statLabel}>Approved/Completed</div></div>
             </div>
 
             {/* Refunds Table */}
@@ -138,7 +167,7 @@ function Refunds() {
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Refund ID</th>
+                            <th style={styles.th}>Request ID</th>
                             <th style={styles.th}>Order ID</th>
                             <th style={styles.th}>Customer</th>
                             <th style={styles.th}>Amount</th>
@@ -156,12 +185,13 @@ function Refunds() {
                                 <td style={styles.td}><strong>${refund.amount?.toFixed(2)}</strong></td>
                                 <td style={styles.td}>
                                     <span style={{ ...styles.badge, background: getStatusColor(refund.status).bg, color: getStatusColor(refund.status).text }}>
-                                        {refund.status}
+                                        {refund.status === 'processed' ? 'completed' : refund.status}
                                     </span>
                                 </td>
                                 <td style={styles.td}>{refund.createdAt ? new Date(refund.createdAt).toLocaleDateString() : '-'}</td>
                                 <td style={styles.td}>
-                                    <button style={styles.btn} onClick={() => setSelectedRefund(refund)}>Manage</button>
+                                    <button style={styles.btn} onClick={() => { setSelectedRefund(refund); setNewMessage(''); setReplyImages([]); }}>Manage</button>
+                                    {/* Make sure verified status updates to completed if it was processed */}
                                 </td>
                             </tr>
                         ))}
@@ -169,7 +199,7 @@ function Refunds() {
                 </table>
             </div>
 
-            {filteredRefunds.length === 0 && <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No refund requests found</div>}
+            {filteredRefunds.length === 0 && <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No refund/return requests found</div>}
 
             {/* Refund Details Modal */}
             {selectedRefund && (
@@ -179,7 +209,7 @@ function Refunds() {
                             <span>Refund {selectedRefund.refundId}</span>
                             <select
                                 style={styles.statusSelect}
-                                value={selectedRefund.status}
+                                value={selectedRefund.status === 'processed' ? 'completed' : selectedRefund.status}
                                 onChange={e => updateRefundStatus(selectedRefund.id, e.target.value)}
                                 disabled={updating}
                             >
@@ -187,13 +217,13 @@ function Refunds() {
                                 <option value="reviewing">🔍 Under Review</option>
                                 <option value="approved">✅ Approved</option>
                                 <option value="denied">❌ Denied</option>
-                                <option value="processed">💰 Processed</option>
+                                <option value="completed">💰 Completed</option>
                             </select>
                         </div>
 
                         {/* Refund Info */}
                         <div style={styles.section}>
-                            <div style={styles.sectionTitle}>Refund Information</div>
+                            <div style={styles.sectionTitle}>Request Information</div>
                             <div style={styles.infoGrid}>
                                 <div style={styles.infoItem}><div style={styles.infoLabel}>Order ID</div><div style={styles.infoValue}>{selectedRefund.orderId}</div></div>
                                 <div style={styles.infoItem}><div style={styles.infoLabel}>Amount</div><div style={{ ...styles.infoValue, color: '#6B2346', fontWeight: '700' }}>${selectedRefund.amount?.toFixed(2)} AUD</div></div>
@@ -204,7 +234,7 @@ function Refunds() {
 
                         {/* Reason */}
                         <div style={styles.section}>
-                            <div style={styles.sectionTitle}>Reason for Refund</div>
+                            <div style={styles.sectionTitle}>Reason for Request</div>
                             <div style={{ ...styles.infoItem, background: '#FFF3E0' }}>
                                 <div style={styles.infoValue}>{selectedRefund.reason}</div>
                             </div>
@@ -225,6 +255,15 @@ function Refunds() {
                                             {msg.from === 'admin' ? '👤 Support Team' : '🛒 Customer'}
                                         </div>
                                         <div style={styles.messageText}>{msg.message}</div>
+                                        {msg.images && msg.images.length > 0 && (
+                                            <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                                                {msg.images.map((img, idx) => (
+                                                    <a key={idx} href={img.startsWith('http') ? img : `${API_BASE_URL}${img}`} target="_blank" rel="noopener noreferrer">
+                                                        <img src={img.startsWith('http') ? img : `${API_BASE_URL}${img}`} alt="Attached" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        )}
                                         <div style={styles.messageDate}>{new Date(msg.date).toLocaleString()}</div>
                                     </div>
                                 ))}
@@ -241,13 +280,33 @@ function Refunds() {
                                     onChange={e => setNewMessage(e.target.value)}
                                     placeholder="Type your message... Customer will receive this via email."
                                 />
-                                <button
-                                    style={styles.sendBtn}
-                                    onClick={sendMessage}
-                                    disabled={updating}
-                                >
-                                    {updating ? 'Sending...' : '📧 Send Message & Email'}
-                                </button>
+
+                                {replyImages.length > 0 && (
+                                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+                                        {replyImages.map((img, idx) => (
+                                            <div key={idx} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                                                <img src={img.startsWith('http') ? img : `${API_BASE_URL}${img}`} alt="Upload preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <button onClick={() => setReplyImages(prev => prev.filter((_, i) => i !== idx))} style={{ position: 'absolute', top: 0, right: 0, background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '12px' }}>×</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+                                    <div>
+                                        <input type="file" id="admin-reply-images" multiple accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploadingImages || replyImages.length >= 3} />
+                                        <label htmlFor="admin-reply-images" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', cursor: (uploadingImages || replyImages.length >= 3) ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: '600', color: '#475569' }}>
+                                            {uploadingImages ? 'Uploading...' : '📷 Attach Image'}
+                                        </label>
+                                    </div>
+                                    <button
+                                        style={{ ...styles.sendBtn, marginTop: 0, opacity: (updating || (!newMessage.trim() && replyImages.length === 0)) ? 0.7 : 1 }}
+                                        onClick={sendMessage}
+                                        disabled={updating || (!newMessage.trim() && replyImages.length === 0)}
+                                    >
+                                        {updating ? 'Sending...' : '📧 Send Message & Email'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

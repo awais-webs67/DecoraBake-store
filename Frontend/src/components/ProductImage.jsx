@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import API_BASE_URL from '../config/api'
 
 const PLACEHOLDER = '/placeholder.svg'
 
@@ -29,8 +30,8 @@ export function ProductImage({ src, alt, style, className }) {
 export function getImageUrl(path) {
     if (!path) return PLACEHOLDER
     if (path.startsWith('http')) return path
-    if (path.startsWith('/uploads/')) return `http://localhost:3001${path}`
-    if (path.startsWith('uploads/')) return `http://localhost:3001/${path}`
+    if (path.startsWith('/uploads/')) return `${API_BASE_URL}${path}`
+    if (path.startsWith('uploads/')) return `${API_BASE_URL}/${path}`
     return path
 }
 

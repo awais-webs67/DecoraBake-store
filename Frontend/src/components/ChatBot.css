@@ -11,21 +11,21 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6B2346 0%, #4a1830 100%);
+    background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
     color: white;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 20px rgba(107, 35, 70, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     transition: all 0.3s ease;
     position: relative;
 }
 
 .chatbot__toggle:hover {
     transform: scale(1.08);
-    box-shadow: 0 6px 25px rgba(107, 35, 70, 0.5);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
 }
 
 .chatbot__badge {
@@ -74,7 +74,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 14px 16px;
-    background: linear-gradient(135deg, #6B2346 0%, #4a1830 100%);
+    background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
     color: white;
 }
 
@@ -109,6 +109,7 @@
     font-size: 0.95rem;
     font-weight: 600;
     margin-bottom: 1px;
+    color: #fff;
 }
 
 .chatbot__status {
@@ -191,13 +192,22 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6B2346 0%, #4a1830 100%);
+    background: #fff;
+    border: 1.5px solid #e0d0d8;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
     flex-shrink: 0;
+    overflow: hidden;
+    padding: 3px;
 }
+
+.chatbot__message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 
 .chatbot__message-content {
     padding: 10px 14px;

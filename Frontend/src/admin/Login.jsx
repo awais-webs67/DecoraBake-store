@@ -36,18 +36,18 @@ function Login() {
 
     const styles = {
         page: { minHeight: '100vh', background: 'linear-gradient(135deg, #6B2346 0%, #4A1830 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' },
-        card: { background: '#fff', borderRadius: '24px', padding: '50px 40px', width: '100%', maxWidth: '420px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' },
-        logo: { textAlign: 'center', marginBottom: '30px' },
-        logoImg: { height: '60px' },
-        title: { fontFamily: "'Playfair Display', serif", fontSize: '28px', fontWeight: '700', color: '#222', textAlign: 'center', marginBottom: '8px' },
-        subtitle: { fontSize: '15px', color: '#666', textAlign: 'center', marginBottom: '32px' },
-        error: { background: '#FFEBEE', color: '#C62828', padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '20px', textAlign: 'center' },
-        formGroup: { marginBottom: '20px' },
-        label: { display: 'block', fontSize: '13px', fontWeight: '600', color: '#333', marginBottom: '8px' },
-        input: { width: '100%', padding: '14px 18px', border: '2px solid #e5e5e5', borderRadius: '12px', fontSize: '15px', boxSizing: 'border-box', transition: 'border-color 0.2s' },
-        submitBtn: { width: '100%', padding: '16px', background: '#6B2346', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', marginTop: '10px' },
-        hint: { marginTop: '30px', paddingTop: '24px', borderTop: '1px solid #eee', textAlign: 'center' },
-        hintText: { fontSize: '13px', color: '#888' }
+        card: { background: '#fff', borderRadius: '20px', padding: '36px 32px', width: '100%', maxWidth: '380px', boxSizing: 'border-box', boxShadow: '0 12px 40px rgba(0,0,0,0.2)' },
+        logo: { textAlign: 'center', marginBottom: '24px' },
+        logoImg: { height: '50px' },
+        title: { fontFamily: "'Playfair Display', serif", fontSize: '24px', fontWeight: '800', color: '#1a1a1a', textAlign: 'center', marginBottom: '6px' },
+        subtitle: { fontSize: '13px', color: '#666', textAlign: 'center', marginBottom: '28px' },
+        error: { background: '#FEF2F2', color: '#DC2626', padding: '12px 16px', border: '1px solid #FECDD3', borderRadius: '10px', fontSize: '13px', marginBottom: '20px', textAlign: 'center' },
+        formGroup: { marginBottom: '16px' },
+        label: { display: 'block', fontSize: '12px', fontWeight: '600', color: '#334155', marginBottom: '6px' },
+        input: { width: '100%', padding: '12px 14px', border: '1px solid #cbd5e1', borderRadius: '10px', fontSize: '14px', boxSizing: 'border-box', transition: 'all 0.2s', outline: 'none' },
+        submitBtn: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, #6B2346, #8B3A5E)', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', marginTop: '8px', boxShadow: '0 4px 12px rgba(107,35,70,0.2)' },
+        hint: { marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #f1f5f9', textAlign: 'center' },
+        hintText: { fontSize: '12px', color: '#94a3b8' }
     }
 
     return (

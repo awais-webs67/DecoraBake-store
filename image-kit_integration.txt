@@ -1,0 +1,6 @@
+ImagekitID: xjbkaiwiu
+
+URL-endpoint: https://ik.imagekit.io/xjbkaiwiu
+
+Public key:public_XZzKNj9luFrLMNw/dbWeK6Y9rP8=
+Privatekey: private_lfkLuR04QofFZ5vyuaLoxrzbPiU=

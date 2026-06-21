@@ -65,7 +65,7 @@ function PromoCodes() {
         btnDelete: { background: '#FFEBEE', color: '#C62828' },
         btnToggle: { background: '#fff', border: '1px solid #ddd', color: '#666' },
         modal: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' },
-        modalContent: { background: '#fff', borderRadius: '20px', padding: '30px', width: '100%', maxWidth: '500px' },
+        modalContent: { background: '#fff', borderRadius: '20px', padding: '30px', width: '100%', maxWidth: '600px', maxHeight: '85vh', overflowY: 'auto' },
         modalTitle: { fontSize: '22px', fontWeight: '600', marginBottom: '24px' },
         formGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' },
         formGroup: { marginBottom: '20px' },

@@ -16,17 +16,25 @@ function Footer() {
 
     const { showToast } = useToast()
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        if (email) { showToast('Thank you for subscribing! 🎉', 'success'); setEmail('') }
+        if (email) {
+            try {
+                await fetch(`${API_BASE_URL}/api/newsletter`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                })
+            } catch { }
+            showToast('Thank you for subscribing! 🎉', 'success')
+            setEmail('')
+        }
     }
 
-    // Get footer logo URL
     const logoUrl = settings.footerLogo?.startsWith('/uploads')
         ? `${API_BASE_URL}${settings.footerLogo}`
         : (settings.footerLogo || '/logo.png')
 
-    // Social links from settings
     const socials = [
         { key: 'facebook', url: settings.socialFacebook, icon: <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" /></svg> },
         { key: 'instagram', url: settings.socialInstagram, icon: <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153.509.5.902 1.105 1.153 1.772.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm6.5-.25a1.25 1.25 0 1 0-2.5 0 1.25 1.25 0 0 0 2.5 0ZM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z" /></svg> },
@@ -88,18 +96,27 @@ function Footer() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             <Link to="/contact" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>Contact</Link>
                             <Link to="/about" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>About Us</Link>
-                            <Link to="/privacy" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>Privacy Policy</Link>
+                            <Link to="/shipping-policy" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>Shipping & Returns</Link>
                             <Link to="/blog" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>Blog</Link>
                         </div>
                     </div>
 
-                    {/* Contact - Clickable */}
+                    {/* Legal Links */}
+                    <div>
+                        <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#fff', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Legal</h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            <Link to="/privacy" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>Privacy Policy</Link>
+                            <Link to="/terms" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>Terms of Service</Link>
+                        </div>
+                    </div>
+
+                    {/* Contact */}
                     <div>
                         <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#fff', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
                             <a href={`tel:${(settings.contactPhone || '1300123456').replace(/\s/g, '')}`} style={{ color: '#888', textDecoration: 'none' }}>📞 {settings.contactPhone || '1300 123 456'}</a>
                             <a href={`mailto:${settings.contactEmail || 'hello@decorabake.com.au'}`} style={{ color: '#888', textDecoration: 'none' }}>✉️ {settings.contactEmail || 'hello@decorabake.com.au'}</a>
-                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address || 'Sydney, Australia')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#888', textDecoration: 'none' }}>📍 {settings.address || 'Sydney, Australia'}</a>
+                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address || settings.emailFooterText || 'Sydney, Australia')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#888', textDecoration: 'none' }}>📍 {settings.address || settings.emailFooterText || 'Sydney, Australia'}</a>
                         </div>
                     </div>
                 </div>
@@ -107,13 +124,13 @@ function Footer() {
                 {/* Bottom */}
                 <div style={{ borderTop: '1px solid #222', padding: '20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                     <span style={{ fontSize: '12px', color: '#666' }}>© {new Date().getFullYear()} {settings.siteName || 'DecoraBake'}. All rights reserved.</span>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
                         {/* Visa */}
-                        <svg viewBox="0 0 38 24" width="38" height="24" fill="none"><rect width="38" height="24" rx="3" fill="#fff" /><path d="M15.6 16.2l1.5-9.4h2.4l-1.5 9.4h-2.4zm10.2-9.2c-.5-.2-1.2-.4-2.2-.4-2.4 0-4.1 1.3-4.1 3.1 0 1.4 1.2 2.1 2.2 2.6.9.5 1.3.8 1.3 1.2 0 .7-.8 1-1.5 1-1 0-1.5-.1-2.4-.5l-.3-.2-.4 2.2c.6.3 1.7.5 2.8.5 2.6 0 4.3-1.3 4.3-3.3 0-1.1-.7-1.9-2.1-2.6-.9-.4-1.5-.7-1.5-1.2 0-.4.5-.8 1.5-.8.9 0 1.5.2 2 .4l.2.1.5-2.1zm6.2-.2h-1.9c-.6 0-1 .2-1.3.7l-3.7 8.7h2.6l.5-1.4h3.2l.3 1.4h2.3l-2-9.4zm-3 6.1l1-2.6.5 2.6h-1.5zM13.7 6.8l-2.4 6.4-.3-1.3c-.5-1.5-1.9-3.2-3.5-4l2.2 8.3h2.6l3.9-9.4h-2.5z" fill="#1A1F71" /><path d="M8.9 6.8H5l-.1.2c3.1.8 5.1 2.6 6 4.8l-.9-4.4c-.1-.5-.5-.6-.9-.6z" fill="#F9A533" /></svg>
+                        <svg viewBox="0 0 50 32" width="42" height="27" fill="none"><rect width="50" height="32" rx="4" fill="#fff" /><path d="M20.5 21l2-12h3.2l-2 12h-3.2zm13.6-11.8c-.6-.3-1.6-.5-2.8-.5-3.2 0-5.4 1.7-5.4 4.1 0 1.8 1.6 2.8 2.9 3.4 1.2.6 1.7 1 1.7 1.6 0 .9-1 1.3-2 1.3-1.3 0-2-.2-3.2-.7l-.4-.2-.5 2.9c.8.4 2.2.7 3.7.7 3.4 0 5.6-1.7 5.6-4.3 0-1.4-.9-2.5-2.8-3.4-1.2-.6-1.9-.9-1.9-1.5 0-.5.6-1 2-1 1.1 0 2 .2 2.6.5l.3.1.5-2.7zm8.3-.2h-2.5c-.8 0-1.3.2-1.7 1l-4.8 11h3.4l.7-1.9h4.2l.4 1.9h3l-2.7-12zm-4 7.7l1.3-3.4.7 3.4h-2zm-20-7.7l-3.2 8.2-.3-1.7c-.6-2.1-2.5-4.3-4.6-5.4l2.9 10.8h3.4l5.1-12h-3.3z" fill="#1A1F71" /><path d="M14.2 9.2h-5.4L8.7 9.4c4 1 6.7 3.5 7.8 6.4l-1.1-5.8c-.2-.7-.7-.8-1.2-.8z" fill="#F9A533" /></svg>
                         {/* Mastercard */}
-                        <svg viewBox="0 0 38 24" width="38" height="24" fill="none"><rect width="38" height="24" rx="3" fill="#fff" /><circle cx="15" cy="12" r="7" fill="#EB001B" /><circle cx="23" cy="12" r="7" fill="#F79E1B" /><path d="M19 7.5a7 7 0 0 0-2.2 4.5 7 7 0 0 0 2.2 4.5 7 7 0 0 0 2.2-4.5 7 7 0 0 0-2.2-4.5z" fill="#FF5F00" /></svg>
+                        <svg viewBox="0 0 50 32" width="42" height="27" fill="none"><rect width="50" height="32" rx="4" fill="#fff" /><circle cx="20" cy="16" r="9" fill="#EB001B" /><circle cx="30" cy="16" r="9" fill="#F79E1B" /><path d="M25 9.2a9 9 0 0 0-3.3 6.8 9 9 0 0 0 3.3 6.8 9 9 0 0 0 3.3-6.8 9 9 0 0 0-3.3-6.8z" fill="#FF5F00" /></svg>
                         {/* Stripe */}
-                        <svg viewBox="0 0 38 24" width="38" height="24" fill="none"><rect width="38" height="24" rx="3" fill="#6772E5" /><path d="M17.5 10.5c0-.6.5-.9 1.3-.9.7 0 1.5.3 2.2.7l.7-2c-.8-.4-1.8-.7-2.9-.7-2.4 0-3.9 1.2-3.9 3.2 0 3.1 4.4 2.6 4.4 4 0 .7-.6 1-1.5 1-.9 0-1.9-.4-2.7-.9l-.7 2c.9.5 2 .8 3.2.8 2.4 0 4.1-1.2 4.1-3.2 0-3.4-4.2-2.8-4.2-4z" fill="#fff" /></svg>
+                        <svg viewBox="0 0 50 32" width="42" height="27" fill="none"><rect width="50" height="32" rx="4" fill="#6772E5" /><path d="M23 14c0-.8.7-1.2 1.7-1.2 1 0 2 .4 2.9 1l.9-2.7c-1-.5-2.3-.9-3.8-.9-3.1 0-5.1 1.6-5.1 4.2 0 4.1 5.7 3.4 5.7 5.2 0 .9-.8 1.3-2 1.3-1.2 0-2.5-.5-3.5-1.2l-.9 2.7c1.2.7 2.7 1 4.2 1 3.1 0 5.3-1.5 5.3-4.2 0-4.4-5.4-3.6-5.4-5.2z" fill="#fff" /></svg>
                     </div>
                 </div>
             </div>

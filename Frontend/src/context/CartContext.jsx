@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react'
+import { createContext, useContext, useReducer, useEffect, useCallback, useRef, useState } from 'react'
 import API_BASE_URL from '../config/api'
 
 const CartContext = createContext()
@@ -13,14 +13,20 @@ const cartReducer = (state, action) => {
                     ...state,
                     items: state.items.map(item =>
                         (item.id || item._id) === productId
-                            ? { ...item, quantity: item.quantity + (action.payload.quantity || 1) }
+                            ? {
+                                ...item,
+                                quantity: item.quantity + (action.payload.quantity || 1),
+                                customShipping: action.payload.customShipping || item.customShipping || 0,
+                                price: action.payload.price || item.price,
+                                salePrice: action.payload.salePrice !== undefined ? action.payload.salePrice : item.salePrice
+                            }
                             : item
                     )
                 }
             }
             return {
                 ...state,
-                items: [...state.items, { ...action.payload, id: productId, quantity: action.payload.quantity || 1 }]
+                items: [...state.items, { ...action.payload, id: productId, quantity: action.payload.quantity || 1, customShipping: action.payload.customShipping || 0 }]
             }
         }
         case 'REMOVE_FROM_CART':
@@ -45,6 +51,7 @@ const cartReducer = (state, action) => {
 
 export function CartProvider({ children }) {
     const [state, dispatch] = useReducer(cartReducer, { items: [] })
+    const [cartDrawerOpen, setCartDrawerOpen] = useState(false)
     const syncTimeoutRef = useRef(null)
     const isInitializedRef = useRef(false)
 
@@ -67,7 +74,8 @@ export function CartProvider({ children }) {
                         price: item.price,
                         salePrice: item.salePrice,
                         image: item.image || item.images?.[0],
-                        quantity: item.quantity
+                        quantity: item.quantity,
+                        customShipping: item.customShipping || 0
                     }))
                 })
             })
@@ -95,7 +103,8 @@ export function CartProvider({ children }) {
                                 price: item.price,
                                 salePrice: item.salePrice,
                                 image: item.image,
-                                quantity: item.quantity
+                                quantity: item.quantity,
+                                customShipping: item.customShipping || 0
                             }))
                             dispatch({ type: 'LOAD_CART', payload: items })
                             localStorage.setItem('decorabake_cart', JSON.stringify(items))
@@ -194,7 +203,8 @@ export function CartProvider({ children }) {
                         price: item.price,
                         salePrice: item.salePrice,
                         image: item.image,
-                        quantity: item.quantity
+                        quantity: item.quantity,
+                        customShipping: item.customShipping || 0
                     }))
                     dispatch({ type: 'LOAD_CART', payload: items })
                 }
@@ -211,7 +221,9 @@ export function CartProvider({ children }) {
             clearCart,
             getCartTotal,
             getCartCount,
-            reloadCart
+            reloadCart,
+            cartDrawerOpen,
+            setCartDrawerOpen
         }}>
             {children}
         </CartContext.Provider>

@@ -1,9 +1,8 @@
 import API_BASE_URL from '../config/api'
 import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { useCart } from '../context/CartContext'
-import { useWishlist } from '../context/WishlistContext'
-import { useToast } from '../context/ToastContext'
+import { useSEO } from '../hooks/useSEO'
+import ProductCard from '../components/ProductCard'
 
 function useWindowSize() {
     const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
@@ -15,70 +14,14 @@ function useWindowSize() {
     return width
 }
 
-// Product card with proper image error handling and quick Add to Cart
-function ProductCard({ product, styles }) {
-    const [imgSrc, setImgSrc] = useState(product.image || product.images?.[0] || '/placeholder.svg')
-    const [imgError, setImgError] = useState(false)
-    const [addedToCart, setAddedToCart] = useState(false)
-    const { addToCart } = useCart()
-    const { toggleWishlist, isInWishlist } = useWishlist()
-    const { showToast } = useToast()
-    const productId = product.id || product._id
-    const wishlisted = isInWishlist(productId)
 
-    const handleImageError = () => {
-        if (!imgError) {
-            setImgError(true)
-            setImgSrc('/placeholder.svg')
-        }
-    }
-
-    const handleAddToCart = (e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        addToCart(product, 1)
-        setAddedToCart(true)
-        setTimeout(() => setAddedToCart(false), 1500)
-    }
-
-    if (!productId) return null
-
-    return (
-        <Link to={`/product/${productId}`} style={{ textDecoration: 'none' }}>
-            <div style={styles.card}>
-                <div style={styles.cardImageWrap}>
-                    <img src={imgSrc} alt={product.name} style={styles.cardImage} loading="lazy" onError={handleImageError} />
-                    <button
-                        style={{ position: 'absolute', top: '10px', right: '10px', width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.1)', zIndex: 2 }}
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); const added = toggleWishlist(product); showToast(added ? `${product.name} added to wishlist` : `${product.name} removed from wishlist`, added ? 'success' : 'info') }}
-                        title={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-                    >
-                        <svg viewBox="0 0 24 24" width="18" height="18">
-                            <path fill={wishlisted ? '#EF4444' : 'none'} stroke={wishlisted ? '#EF4444' : '#666'} strokeWidth="2" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                        </svg>
-                    </button>
-                    <button style={styles.quickAddBtn} onClick={handleAddToCart} title="Add to Cart">
-                        {addedToCart ? (
-                            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
-                        ) : (
-                            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-8.9-5h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4l-3.87 7H8.53L4.27 2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z" /></svg>
-                        )}
-                    </button>
-                </div>
-                <div style={styles.cardContent}>
-                    <p style={styles.cardCategory}>{product.category || 'Cake Supplies'}</p>
-                    <h3 style={styles.cardName}>{product.name}</h3>
-                    <div>
-                        <span style={styles.cardPrice}>${product.salePrice || product.price}</span>
-                        {product.salePrice && <span style={styles.cardOldPrice}>${product.price}</span>}
-                    </div>
-                </div>
-            </div>
-        </Link>
-    )
-}
 
 function Products() {
+    useSEO({
+        title: 'Shop All Products',
+        description: 'Browse our extensive collection of cake decorating supplies, including toppers, sprinkles, and tools.',
+        url: '/products'
+    })
     const [searchParams, setSearchParams] = useSearchParams()
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
@@ -145,13 +88,13 @@ function Products() {
     }
 
     const styles = {
-        page: { background: '#f8f8f8', minHeight: '100vh' },
-        header: { background: 'linear-gradient(135deg, #6B2346 0%, #4A1830 100%)', color: '#fff', padding: isMobile ? '30px 0' : '50px 0' },
+        page: { background: '#f8f8f8', minHeight: '100vh', overflowX: 'hidden' },
+        header: { background: 'linear-gradient(135deg, #6B2346 0%, #4A1830 100%)', color: '#fff', padding: isMobile ? '30px 0' : '50px 0', position: 'relative', overflow: 'hidden' },
         container: { maxWidth: '1200px', margin: '0 auto', padding: '0 20px' },
         breadcrumb: { display: 'flex', gap: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '20px' },
         breadcrumbLink: { color: '#F9D5E0', textDecoration: 'none' },
-        title: { fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '28px' : '40px', fontWeight: '700', marginBottom: '10px' },
-        count: { fontSize: '15px', opacity: 0.8 },
+        title: { fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '28px' : '40px', fontWeight: '700', marginBottom: '10px', color: '#ffffff' },
+        count: { fontSize: '15px', opacity: 0.8, color: '#ffffff' },
         layout: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '250px 1fr', gap: '30px', padding: '40px 0' },
         sidebar: { display: isMobile ? (showFilters ? 'block' : 'none') : 'block', position: isMobile ? 'fixed' : 'relative', top: isMobile ? 0 : 'auto', left: isMobile ? 0 : 'auto', right: isMobile ? 0 : 'auto', bottom: isMobile ? 0 : 'auto', background: isMobile ? '#fff' : 'transparent', zIndex: isMobile ? 1000 : 1, padding: isMobile ? '20px' : 0, overflow: isMobile ? 'auto' : 'visible' },
         filterSection: { background: '#fff', borderRadius: '12px', padding: '20px', marginBottom: '20px', border: '1px solid #eee' },
@@ -169,7 +112,7 @@ function Products() {
         sortLabel: { fontSize: '14px', color: '#666' },
         sortSelect: { padding: '10px 16px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '14px', background: '#fff', cursor: 'pointer' },
         filterBtn: { display: isMobile ? 'flex' : 'none', alignItems: 'center', gap: '8px', padding: '12px 20px', background: '#6B2346', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' },
-        grid: { display: 'grid', gridTemplateColumns: getGridColumns(), gap: isMobile ? '12px' : '24px' },
+        grid: { display: 'grid', gridTemplateColumns: getGridColumns(), gap: isMobile ? '16px' : '32px' },
         card: { background: '#fff', borderRadius: '16px', overflow: 'hidden', border: '1px solid #eee' },
         cardImageWrap: { position: 'relative', overflow: 'hidden' },
         cardImage: { width: '100%', height: isMobile ? '150px' : '200px', objectFit: 'cover', background: '#f5f5f5', display: 'block' },
@@ -197,7 +140,10 @@ function Products() {
         <div style={styles.page}>
             {/* Header */}
             <div style={styles.header}>
-                <div style={styles.container}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.1, backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
+                <div style={{ position: 'absolute', top: '20px', right: '60px', fontSize: '90px', opacity: 0.06 }}>🧁</div>
+                <div style={{ position: 'absolute', bottom: '10px', left: '40px', fontSize: '70px', opacity: 0.05 }}>🎂</div>
+                <div style={{ ...styles.container, position: 'relative', zIndex: 1 }}>
                     <nav style={styles.breadcrumb}>
                         <Link to="/" style={styles.breadcrumbLink}>Home</Link>
                         <span>/</span>
@@ -304,7 +250,6 @@ function Products() {
                                     <ProductCard
                                         key={product.id || product._id}
                                         product={product}
-                                        styles={styles}
                                     />
                                 ))}
                             </div>

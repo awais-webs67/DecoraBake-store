@@ -52,6 +52,8 @@ function AdminLayout() {
         { path: '/admin/support', icon: 'support', label: 'Support Chats' },
         { path: '/admin/refunds', icon: 'refunds', label: 'Refund Requests' },
         { path: '/admin/promo-codes', icon: 'promo', label: 'Promo Codes' },
+        { path: '/admin/newsletter', icon: 'newsletter', label: 'Newsletter' },
+        { path: '/admin/email-templates', icon: 'email-templates', label: 'Email Templates' },
         { path: '/admin/settings', icon: 'settings', label: 'Site Settings' },
         { path: '/admin/diagnostics', icon: 'diagnostics', label: 'Diagnostics' },
     ]
@@ -167,6 +169,8 @@ function AdminLayout() {
                                         {item.icon === 'promo' && <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z" />}
                                         {item.icon === 'settings' && <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />}
                                         {item.icon === 'diagnostics' && <path d="M7 5h10v2H7V5zm0 8v-3h3v3H7zm4 0v-3h3v3h-3zm-4 5v-3h3v3H7zm4 0v-3h3v3h-3zm4-5v-3h3v3h-3zm0 5v-3h3v3h-3zm0-13h3v3h-3V5z" />}
+                                        {item.icon === 'newsletter' && <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />}
+                                        {item.icon === 'email-templates' && <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />}
                                     </svg>
                                     {item.label}
                                 </Link>

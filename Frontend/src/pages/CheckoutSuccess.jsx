@@ -1,18 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
-import { trackPurchase } from '../components/Analytics'
+import { trackPurchase, trackGoogleAdsConversion } from '../components/Analytics'
 import API_BASE_URL from '../config/api'
-
-function useWindowSize() {
-    const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
-    useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth)
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
-    }, [])
-    return width
-}
 
 function CheckoutSuccess() {
     const [searchParams] = useSearchParams()
@@ -22,10 +12,7 @@ function CheckoutSuccess() {
     const [orderId, setOrderId] = useState(orderParam)
     const [loading, setLoading] = useState(!!sessionId)
     const [paymentConfirmed, setPaymentConfirmed] = useState(false)
-    const width = useWindowSize()
-    const isMobile = width < 768
 
-    // Handle Stripe redirect — fetch order info from session
     useEffect(() => {
         if (sessionId) {
             clearCart()
@@ -35,119 +22,177 @@ function CheckoutSuccess() {
                     if (data.orderId) setOrderId(data.orderId)
                     if (data.status === 'paid') {
                         setPaymentConfirmed(true)
-                        // Fire purchase conversion tracking for ads
-                        trackPurchase({
+                        const orderData = {
                             orderId: data.orderId,
                             total: data.amountTotal || 0,
                             items: data.items || []
-                        })
+                        }
+                        trackPurchase(orderData)
+
+                        // Google Ads Conversion
+                        const conversionId = import.meta.env.VITE_GADS_CONVERSION_ID
+                        const conversionLabel = import.meta.env.VITE_GADS_CONVERSION_LABEL
+                        if (conversionId && conversionLabel) {
+                            trackGoogleAdsConversion(orderData, conversionId, conversionLabel)
+                        }
                     }
                     setLoading(false)
                 })
                 .catch(() => setLoading(false))
         } else if (orderParam) {
             clearCart()
-            // Fire purchase tracking for direct orders too
             trackPurchase({ orderId: orderParam, total: 0, items: [] })
         }
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const styles = {
-        page: { background: '#f8f8f8', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' },
-        card: { background: '#fff', borderRadius: '24px', padding: isMobile ? '40px 24px' : '60px 50px', textAlign: 'center', maxWidth: '500px', width: '100%', boxShadow: '0 10px 40px rgba(0,0,0,0.08)' },
-        iconWrapper: { width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(135deg, #6B2346 0%, #C64977 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px' },
-        checkmark: { width: '50px', height: '50px', color: '#fff' },
-        title: { fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '28px' : '34px', fontWeight: '700', color: '#222', marginBottom: '16px' },
-        subtitle: { fontSize: '16px', color: '#666', marginBottom: '30px', lineHeight: '1.6' },
-        orderBox: { background: '#FCE8ED', borderRadius: '12px', padding: '20px', marginBottom: '30px' },
-        orderLabel: { fontSize: '13px', color: '#6B2346', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' },
-        orderId: { fontFamily: "'Poppins', sans-serif", fontSize: '22px', fontWeight: '700', color: '#6B2346' },
-        infoList: { textAlign: 'left', marginBottom: '35px' },
-        infoItem: { display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 0', borderBottom: '1px solid #f0f0f0', fontSize: '14px', color: '#555' },
-        infoIcon: { width: '40px', height: '40px', borderRadius: '10px', background: '#f8f8f8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-        btnPrimary: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '16px 32px', background: '#6B2346', color: '#fff', borderRadius: '12px', fontSize: '16px', fontWeight: '600', textDecoration: 'none', marginBottom: '16px' },
-        btnSecondary: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '14px 32px', background: 'transparent', color: '#6B2346', borderRadius: '12px', fontSize: '15px', fontWeight: '600', textDecoration: 'none', border: '2px solid #6B2346' },
-        footer: { marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #eee', fontSize: '13px', color: '#888' }
-    }
-
     if (loading) {
         return (
-            <div style={styles.page}>
-                <div style={styles.card}>
-                    <div style={{ fontSize: '18px', color: '#666' }}>Confirming your payment...</div>
-                </div>
+            <div style={s.loadingWrap}>
+                <div style={s.spinner} />
+                <p style={s.loadingText}>Confirming your payment...</p>
             </div>
         )
     }
 
     return (
-        <div style={styles.page}>
-            <div style={styles.card}>
-                {/* Success Icon */}
-                <div style={styles.iconWrapper}>
-                    <svg style={styles.checkmark} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
+        <div style={s.page}>
+            <div style={s.card}>
+                {/* Checkmark */}
+                <div style={s.checkCircle}>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 6L9 17L4 12" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+                            style={{ animation: 'drawCheck 0.6s ease-out 0.3s both' }} />
                     </svg>
                 </div>
 
-                <h1 style={styles.title}>Order Confirmed!</h1>
-                <p style={styles.subtitle}>Thank you for your purchase. We've received your order and will begin processing it right away.</p>
+                <h1 style={s.title}>Order Confirmed!</h1>
+                <p style={s.subtitle}>Thank you for your purchase. Your order is being processed.</p>
 
-                {/* Payment Confirmed Badge */}
+                {/* Payment badge */}
                 {paymentConfirmed && (
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#ECFDF5', color: '#059669', padding: '8px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: '600', marginBottom: '20px' }}>
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
-                        Payment confirmed via Stripe
+                    <div style={s.paymentBadge}>
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                        Payment confirmed
                     </div>
                 )}
 
-                {/* Order ID */}
+                {/* Order number pill */}
                 {orderId && (
-                    <div style={styles.orderBox}>
-                        <div style={styles.orderLabel}>Order Number</div>
-                        <div style={styles.orderId}>#{orderId}</div>
+                    <div style={s.orderBox}>
+                        <span style={s.orderLabel}>Order Number</span>
+                        <span style={s.orderNumber}>#{orderId}</span>
                     </div>
                 )}
 
-                {/* What's Next */}
-                <div style={styles.infoList}>
-                    <div style={styles.infoItem}>
-                        <div style={styles.infoIcon}>
-                            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#6B2346" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" /></svg>
+                {/* Steps */}
+                <div style={s.stepsWrap}>
+                    {[
+                        { icon: '✉️', text: 'Confirmation email sent' },
+                        { icon: '📦', text: 'Ships within 1-2 business days' },
+                        { icon: '🔔', text: 'Track your order in your account' },
+                    ].map((item, i) => (
+                        <div key={i} style={s.stepRow}>
+                            <span style={s.stepIcon}>{item.icon}</span>
+                            <span style={s.stepText}>{item.text}</span>
                         </div>
-                        <span>A confirmation email has been sent to your inbox</span>
-                    </div>
-                    <div style={styles.infoItem}>
-                        <div style={styles.infoIcon}>
-                            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#6B2346" d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" /></svg>
-                        </div>
-                        <span>Your order will be shipped within 1-2 business days</span>
-                    </div>
-                    <div style={styles.infoItem}>
-                        <div style={styles.infoIcon}>
-                            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#6B2346" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
-                        </div>
-                        <span>Track your order in your account dashboard</span>
-                    </div>
+                    ))}
                 </div>
 
                 {/* Buttons */}
-                <Link to="/products" style={styles.btnPrimary}>
-                    Continue Shopping
-                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
-                </Link>
-                <Link to="/account" style={styles.btnSecondary}>
-                    View My Orders
-                </Link>
+                <div style={s.btns}>
+                    <Link to="/products" style={s.primaryBtn}>
+                        Continue Shopping
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                    </Link>
+                    <Link to="/account" style={s.outlineBtn}>View My Orders</Link>
+                </div>
 
-                <div style={styles.footer}>
-                    Need help? <a href="mailto:support@decorabake.com.au" style={{ color: '#6B2346' }}>Contact Support</a>
+                <div style={s.helpText}>
+                    Need help? <a href="mailto:support@decorabake.com.au" style={s.helpLink}>Contact Support</a>
                 </div>
             </div>
+
+            <style>{`
+                @keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+                @keyframes scaleIn { from { transform: scale(0); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+                @keyframes drawCheck { from { stroke-dasharray: 30; stroke-dashoffset: 30 } to { stroke-dashoffset: 0 } }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: translateY(0) } }
+                .cs-card:hover { box-shadow: 0 8px 32px rgba(107,35,70,0.1) !important; }
+            `}</style>
         </div>
     )
 }
 
+const s = {
+    page: {
+        background: 'linear-gradient(180deg, #FDF6F8 0%, #F5F5F5 100%)',
+        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '24px 16px'
+    },
+    loadingWrap: {
+        background: '#FAFAFA', minHeight: '100vh', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', gap: '16px'
+    },
+    spinner: {
+        width: '40px', height: '40px', border: '3px solid #f0f0f0', borderTopColor: '#6B2346',
+        borderRadius: '50%', animation: 'spin 0.8s linear infinite'
+    },
+    loadingText: { fontSize: '14px', color: '#888', margin: 0 },
+    card: {
+        maxWidth: '420px', width: '100%', background: '#fff', borderRadius: '24px',
+        padding: '40px 32px', textAlign: 'center',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.06)', border: '1px solid #f0f0f0',
+        animation: 'fadeIn 0.5s ease-out', boxSizing: 'border-box'
+    },
+    checkCircle: {
+        width: '64px', height: '64px', borderRadius: '50%',
+        background: 'linear-gradient(135deg, #059669, #10B981)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        margin: '0 auto 24px',
+        boxShadow: '0 8px 25px rgba(5,150,105,0.3)',
+        animation: 'scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+    },
+    title: {
+        fontFamily: "'Playfair Display', serif", fontSize: '26px',
+        fontWeight: '800', color: '#1a1a1a', margin: '0 0 8px', lineHeight: '1.2'
+    },
+    subtitle: {
+        fontSize: '14px', color: '#666', margin: '0 0 20px', lineHeight: '1.5'
+    },
+    paymentBadge: {
+        display: 'inline-flex', alignItems: 'center', gap: '6px',
+        background: '#ECFDF5', color: '#059669', padding: '6px 14px', borderRadius: '100px',
+        fontSize: '13px', fontWeight: '600', marginBottom: '24px'
+    },
+    orderBox: {
+        background: '#FAFAFA', border: '2px dashed #e0e0e0',
+        borderRadius: '16px', padding: '16px 20px', marginBottom: '24px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+    },
+    orderLabel: { fontSize: '11px', color: '#888', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' },
+    orderNumber: { fontFamily: "'Poppins', sans-serif", fontSize: '17px', fontWeight: '700', color: '#1a1a1a' },
+    stepsWrap: { marginBottom: '24px', textAlign: 'left' },
+    stepRow: {
+        display: 'flex', alignItems: 'center', gap: '12px',
+        padding: '10px 0', borderBottom: '1px solid #f5f5f5'
+    },
+    stepIcon: { fontSize: '16px', flexShrink: 0 },
+    stepText: { fontSize: '13px', color: '#555', lineHeight: '1.4' },
+    btns: { display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' },
+    primaryBtn: {
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+        padding: '13px', background: 'linear-gradient(135deg, #6B2346, #8B3A5E)',
+        color: '#fff', borderRadius: '12px', fontSize: '14px', fontWeight: '600', textDecoration: 'none',
+        boxShadow: '0 3px 12px rgba(107,35,70,0.2)', transition: 'all 0.3s'
+    },
+    outlineBtn: {
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '12px', background: 'transparent', color: '#6B2346',
+        borderRadius: '12px', fontSize: '13px', fontWeight: '600', textDecoration: 'none',
+        border: '1.5px solid #6B2346', transition: 'all 0.3s'
+    },
+    helpText: { paddingTop: '16px', borderTop: '1px solid #f0f0f0', fontSize: '12px', color: '#999' },
+    helpLink: { color: '#6B2346', fontWeight: '500', textDecoration: 'none' }
+}
+
 export default CheckoutSuccess
-
-

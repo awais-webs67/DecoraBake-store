@@ -3,9 +3,13 @@ import { adminApi } from '../config/adminApi'
 import { useState, useEffect, useRef } from 'react'
 
 function Sections() {
-    const [activeTab, setActiveTab] = useState('trust')
+    const [activeTab, setActiveTab] = useState('visibility')
     const [trustFeatures, setTrustFeatures] = useState([])
-    const [promo, setPromo] = useState({ label: '', title: '', description: '', buttonText: '', buttonLink: '', image: '' })
+    const [promo, setPromo] = useState({ label: '', title: '', description: '', buttonText: '', buttonLink: '', image: '', enablePopup: false, popupDelay: 5, timerEnd: '' })
+    const [homeSections, setHomeSections] = useState({
+        heroSlider: true, trustFeatures: true, featuredProducts: true,
+        categoryCircles: true, productGrid: true, promoSection: true, testimonials: true
+    })
     const [saving, setSaving] = useState(false)
     const [message, setMessage] = useState('')
     const [uploading, setUploading] = useState(false)
@@ -29,6 +33,14 @@ function Sections() {
                 if (data && typeof data === 'object') setPromo(prev => ({ ...prev, ...data }))
             })
             .catch(console.error)
+
+        // Fetch homepage section visibility from settings
+        fetch(`${API_BASE_URL}/api/settings`)
+            .then(r => r.json())
+            .then(data => {
+                if (data?.homeSections) setHomeSections(prev => ({ ...prev, ...data.homeSections }))
+            })
+            .catch(() => { })
     }, [])
 
     const handleSave = async () => {
@@ -38,6 +50,8 @@ function Sections() {
                 await adminApi.put('/api/sections/trust-features', trustFeatures)
             } else if (activeTab === 'promo') {
                 await adminApi.put('/api/sections/promo', promo)
+            } else if (activeTab === 'visibility') {
+                await adminApi.put('/api/settings', { homeSections })
             }
             setMessage('Saved successfully!')
             setTimeout(() => setMessage(''), 3000)
@@ -130,9 +144,61 @@ function Sections() {
 
             {/* Tabs */}
             <div style={styles.tabs}>
+                <button style={{ ...styles.tab, ...(activeTab === 'visibility' ? styles.tabActive : {}) }} onClick={() => setActiveTab('visibility')}>Homepage Sections</button>
                 <button style={{ ...styles.tab, ...(activeTab === 'trust' ? styles.tabActive : {}) }} onClick={() => setActiveTab('trust')}>Trust Features</button>
                 <button style={{ ...styles.tab, ...(activeTab === 'promo' ? styles.tabActive : {}) }} onClick={() => setActiveTab('promo')}>Promo Banner</button>
             </div>
+
+            {/* Homepage Section Visibility */}
+            {activeTab === 'visibility' && (
+                <div style={styles.section}>
+                    <h2 style={styles.sectionTitle}>Homepage Section Visibility</h2>
+                    <p style={styles.sectionDesc}>Show or hide sections on the homepage. Changes will take effect immediately for new visitors.</p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {[
+                            { key: 'heroSlider', label: 'Hero Slider', desc: 'Main banner carousel at the top of the page' },
+                            { key: 'trustFeatures', label: 'Trust Features', desc: 'Trust badges below the hero (shipping, payment, etc.)' },
+                            { key: 'featuredProducts', label: 'Featured Products', desc: 'Highlighted products section' },
+                            { key: 'categoryCircles', label: 'Category Circles', desc: 'Circular category navigation' },
+                            { key: 'productGrid', label: 'Latest Products Grid', desc: 'Grid showing latest products' },
+                            { key: 'promoSection', label: 'Promo Section', desc: 'Promotional banner with countdown' },
+                            { key: 'testimonials', label: 'Testimonials', desc: 'Customer reviews carousel' }
+                        ].map(section => (
+                            <div key={section.key} style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                padding: '16px 20px', background: '#f8f8f8', borderRadius: '12px',
+                                border: '1px solid #eee'
+                            }}>
+                                <div>
+                                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#222', marginBottom: '2px' }}>{section.label}</div>
+                                    <div style={{ fontSize: '12px', color: '#888' }}>{section.desc}</div>
+                                </div>
+                                <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '26px', flexShrink: 0 }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={homeSections[section.key] !== false}
+                                        onChange={e => setHomeSections(prev => ({ ...prev, [section.key]: e.target.checked }))}
+                                        style={{ opacity: 0, width: 0, height: 0 }}
+                                    />
+                                    <span style={{
+                                        position: 'absolute', cursor: 'pointer', inset: 0, borderRadius: '26px',
+                                        background: homeSections[section.key] !== false ? '#6B2346' : '#ccc',
+                                        transition: 'background 0.3s'
+                                    }}>
+                                        <span style={{
+                                            position: 'absolute', content: '""', height: '20px', width: '20px',
+                                            left: homeSections[section.key] !== false ? '25px' : '3px',
+                                            bottom: '3px', background: '#fff', borderRadius: '50%',
+                                            transition: 'left 0.3s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                                        }} />
+                                    </span>
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Trust Features */}
             {activeTab === 'trust' && (
@@ -210,6 +276,28 @@ function Sections() {
                         <div style={styles.formGroup}>
                             <label style={styles.label}>Button Link</label>
                             <input type="text" style={styles.input} value={promo.buttonLink || ''} onChange={e => setPromo({ ...promo, buttonLink: e.target.value })} placeholder="/products" />
+                        </div>
+                    </div>
+
+                    <div style={{ borderTop: '1px solid #e5e5e5', marginTop: '24px', paddingTop: '24px' }}>
+                        <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#333', marginBottom: '16px' }}>🎯 Popup Settings</h3>
+                        <div style={styles.grid}>
+                            <div style={styles.formGroup}>
+                                <label style={styles.label}>Enable Popup</label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                                    <input type="checkbox" checked={promo.enablePopup || false} onChange={e => setPromo({ ...promo, enablePopup: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#6B2346' }} />
+                                    <span style={{ fontSize: '14px', color: '#555' }}>{promo.enablePopup ? 'Popup Active' : 'Popup Disabled'}</span>
+                                </label>
+                            </div>
+                            <div style={styles.formGroup}>
+                                <label style={styles.label}>Popup Delay (seconds)</label>
+                                <input type="number" min="1" max="60" style={styles.input} value={promo.popupDelay || 5} onChange={e => setPromo({ ...promo, popupDelay: parseInt(e.target.value) || 5 })} />
+                            </div>
+                        </div>
+                        <div style={styles.formGroup}>
+                            <label style={styles.label}>Countdown Timer End Date</label>
+                            <input type="datetime-local" style={styles.input} value={promo.timerEnd || ''} onChange={e => setPromo({ ...promo, timerEnd: e.target.value })} />
+                            <p style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>Leave empty for no countdown timer</p>
                         </div>
                     </div>
                 </div>

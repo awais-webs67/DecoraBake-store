@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useSEO } from '../hooks/useSEO'
 import API_BASE_URL from '../config/api'
 
 function useWindowSize() {
@@ -79,6 +80,13 @@ function Category() {
         return 'repeat(4, 1fr)'
     }
 
+    useSEO({
+        title: category?.name,
+        description: category?.description || `Shop ${category?.name} at DecoraBake - Australia's #1 Cake Supply Store`,
+        image: category?.image,
+        url: `/category/${slug}`
+    })
+
     useEffect(() => {
         setLoading(true)
         fetch(`${API_BASE_URL}/api/categories/${slug}`)
@@ -110,9 +118,9 @@ function Category() {
         container: { maxWidth: '1200px', margin: '0 auto', padding: '0 20px' },
         breadcrumb: { display: 'flex', gap: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '20px', flexWrap: 'wrap' },
         breadcrumbLink: { color: '#F9D5E0', textDecoration: 'none' },
-        title: { fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '28px' : '44px', fontWeight: '700', marginBottom: '12px' },
-        description: { fontSize: '16px', opacity: 0.9, maxWidth: '600px', marginBottom: '16px' },
-        count: { fontSize: '14px', opacity: 0.7 },
+        title: { fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '28px' : '44px', fontWeight: '700', marginBottom: '12px', color: '#ffffff' },
+        description: { fontSize: '16px', opacity: 0.9, maxWidth: '600px', marginBottom: '16px', color: '#ffffff' },
+        count: { fontSize: '14px', opacity: 0.7, color: '#ffffff' },
         main: { padding: isMobile ? '30px 0' : '50px 0' },
         grid: { display: 'grid', gridTemplateColumns: getGridColumns(), gap: isMobile ? '12px' : '24px' },
         card: { background: '#fff', borderRadius: '16px', overflow: 'hidden', border: '1px solid #eee' },

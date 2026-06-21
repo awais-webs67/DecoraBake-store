@@ -34,12 +34,13 @@ function ChatBot() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
-    const sendMessage = async () => {
-        if (!inputValue.trim() || isLoading) return
+    const sendMessage = async (directMessage) => {
+        const messageText = directMessage || inputValue
+        if (!messageText.trim() || isLoading) return
 
-        const userMessage = { id: Date.now(), type: 'user', text: inputValue }
+        const userMessage = { id: Date.now(), type: 'user', text: messageText }
         setMessages(prev => [...prev, userMessage])
-        const msgToSend = inputValue
+        const msgToSend = messageText
         setInputValue('')
         setIsLoading(true)
 
@@ -180,10 +181,7 @@ function ChatBot() {
                             <button
                                 key={index}
                                 className="chatbot__quick-action"
-                                onClick={() => {
-                                    setInputValue(action.message)
-                                    setTimeout(() => sendMessage(), 100)
-                                }}
+                                onClick={() => sendMessage(action.message)}
                             >
                                 {action.label}
                             </button>

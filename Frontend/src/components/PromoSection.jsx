@@ -32,7 +32,7 @@ function PromoSection() {
         buttonLink: '/products'
     }
 
-    const data = promo || defaultPromo
+    const data = (promo && Object.keys(promo).length > 0 && !Array.isArray(promo)) ? promo : defaultPromo
 
     const styles = {
         section: { position: 'relative', padding: isMobile ? '50px 0' : '80px 0', background: 'linear-gradient(135deg, #6B2346 0%, #4A1830 100%)', overflow: 'hidden' },

@@ -1,0 +1,1183 @@
+{
+  "Users": [
+    {
+      "_id": "6942fbcaead0078400f370a9",
+      "email": "awaisg1066@gmail.com",
+      "password": "$2b$12$z6clIdJRM2dYTrilFkZuH.V2qsqIr14VZZv0qT/BbApcbROqiWu3u",
+      "firstName": "Muhammad",
+      "lastName": "Awais",
+      "phone": "",
+      "role": "customer",
+      "addresses": [],
+      "createdAt": "2025-12-17T18:51:54.497Z",
+      "updatedAt": "2025-12-17T18:51:54.497Z",
+      "__v": 0
+    }
+  ],
+  "Products": [
+    {
+      "_id": "69430560d09ed22ff13e14cc",
+      "name": "Wedding Couple Topper",
+      "slug": "wedding-couple-topper",
+      "description": "Romantic bride and groom cake topper",
+      "price": 24.95,
+      "salePrice": null,
+      "images": [
+        "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c4",
+      "stock": 27,
+      "isNew": false,
+      "isFeatured": true,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "updatedAt": "2025-12-27T02:05:52.051Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14d2",
+      "name": "Flower Cutter Set",
+      "slug": "flower-cutter-set",
+      "description": "12-piece flower cutter set",
+      "price": 18.95,
+      "salePrice": null,
+      "images": [
+        "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=400&fit=crop",
+        "/uploads/1766001419017-653dx0fs1.png"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c6",
+      "stock": 57,
+      "isNew": true,
+      "isFeatured": false,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.344Z",
+      "updatedAt": "2026-02-19T01:21:02.086Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14d0",
+      "name": "Chocolate Jimmies",
+      "slug": "chocolate-jimmies",
+      "description": "Delicious chocolate sprinkles",
+      "price": 5.95,
+      "salePrice": null,
+      "images": [
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c5",
+      "stock": 150,
+      "isNew": false,
+      "isFeatured": false,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "updatedAt": "2025-12-17T19:32:48.343Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14d5",
+      "name": "Silicone Spatula Set",
+      "slug": "silicone-spatula-set",
+      "description": "Heat resistant spatula set",
+      "price": 14.95,
+      "salePrice": null,
+      "images": [
+        "/uploads/1766002376904-1kwjysjew.png"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c7",
+      "stock": 78,
+      "isNew": true,
+      "isFeatured": false,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.346Z",
+      "updatedAt": "2026-02-19T01:29:48.732Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14d4",
+      "name": "Round Cake Pan Set",
+      "slug": "round-cake-pan-set",
+      "description": "3-piece non-stick cake pan set",
+      "price": 39.95,
+      "salePrice": null,
+      "images": [
+        "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c7",
+      "stock": 23,
+      "isNew": false,
+      "isFeatured": true,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "updatedAt": "2025-12-26T22:14:15.050Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14d6",
+      "name": "Piping Bag Set",
+      "slug": "piping-bag-set",
+      "description": "Reusable piping bags with tips",
+      "price": 19.95,
+      "salePrice": 16.95,
+      "images": [
+        "/uploads/1766002360476-yi4gbeot3.png"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c7",
+      "stock": 53,
+      "isNew": false,
+      "isFeatured": false,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "updatedAt": "2025-12-26T22:14:14.828Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14cb",
+      "name": "Happy Birthday Gold Topper",
+      "slug": "happy-birthday-gold-topper",
+      "description": "Elegant gold acrylic cake topper perfect for birthday celebrations",
+      "price": 12.95,
+      "salePrice": 9.95,
+      "images": [
+        "https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c4",
+      "stock": 40,
+      "isNew": true,
+      "isFeatured": true,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.339Z",
+      "updatedAt": "2025-12-27T01:18:19.947Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14d3",
+      "name": "Modelling Tools 8pc",
+      "slug": "modelling-tools-8pc",
+      "description": "Essential modelling tools set",
+      "price": 15.95,
+      "salePrice": null,
+      "images": [
+        "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c6",
+      "stock": 70,
+      "isNew": false,
+      "isFeatured": false,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "updatedAt": "2025-12-17T19:32:48.345Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14d1",
+      "name": "Fondant Rolling Pin Set",
+      "slug": "fondant-rolling-pin-set",
+      "description": "Professional rolling pin set with guides",
+      "price": 29.95,
+      "salePrice": 24.95,
+      "images": [
+        "https://images.unsplash.com/photo-1556217477-d325251ece38?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c6",
+      "stock": 40,
+      "isNew": false,
+      "isFeatured": true,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "updatedAt": "2025-12-17T19:32:48.344Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14ce",
+      "name": "Rainbow Sprinkle Mix",
+      "slug": "rainbow-sprinkle-mix",
+      "description": "Colorful rainbow sprinkle mix 100g",
+      "price": 6.95,
+      "salePrice": 4.95,
+      "images": [
+        "https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c5",
+      "stock": 200,
+      "isNew": false,
+      "isFeatured": true,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "updatedAt": "2025-12-17T19:32:48.342Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14cd",
+      "name": "Number Candles Set",
+      "slug": "number-candles-set",
+      "description": "Gold number candles 0-9",
+      "price": 8.95,
+      "salePrice": null,
+      "images": [
+        "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c4",
+      "stock": 100,
+      "isNew": true,
+      "isFeatured": false,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.341Z",
+      "updatedAt": "2025-12-17T19:32:48.341Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14cf",
+      "name": "Gold Pearl Sprinkles",
+      "slug": "gold-pearl-sprinkles",
+      "description": "Luxurious gold pearl sprinkles",
+      "price": 9.95,
+      "salePrice": null,
+      "images": [
+        "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&h=400&fit=crop"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c5",
+      "stock": 79,
+      "isNew": true,
+      "isFeatured": true,
+      "customShipping": null,
+      "enabled": true,
+      "variants": [],
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.342Z",
+      "updatedAt": "2025-12-27T00:58:25.930Z"
+    },
+    {
+      "_id": "694307648735b1cc94f413ec",
+      "name": "Pooper",
+      "description": "",
+      "price": 40,
+      "salePrice": 37,
+      "images": [
+        "http://localhost:3001/uploads/1766001339959-6yapz30xo.png"
+      ],
+      "categoryId": "69430560d09ed22ff13e14c4",
+      "stock": 90,
+      "isNew": true,
+      "isFeatured": false,
+      "customShipping": 40,
+      "variants": [],
+      "enabled": true,
+      "createdAt": "2025-12-17T19:41:24.952Z",
+      "updatedAt": "2026-02-19T04:34:20.486Z",
+      "slug": "pooper",
+      "__v": 0
+    }
+  ],
+  "Categories": [
+    {
+      "_id": "69430560d09ed22ff13e14c4",
+      "name": "Cake Toppers",
+      "slug": "cake-toppers",
+      "description": "Beautiful cake toppers for every occasion",
+      "image": "http://localhost:3001/uploads/1766000306830-yae8uqdp2.png",
+      "showInNav": true,
+      "showOnHome": true,
+      "order": 0,
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.103Z",
+      "updatedAt": "2025-12-17T19:38:29.273Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14c9",
+      "name": "Packaging",
+      "slug": "packaging",
+      "description": "Cake boxes and packaging supplies",
+      "image": "/placeholder.svg",
+      "showInNav": true,
+      "showOnHome": true,
+      "order": 0,
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.109Z",
+      "updatedAt": "2026-02-19T03:39:24.529Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14c8",
+      "name": "Edible Decorations",
+      "slug": "edible-decorations",
+      "description": "Edible flowers, pearls and decorations",
+      "image": "http://localhost:3001/uploads/1766006279824-fl17pz0nb.png",
+      "showInNav": true,
+      "showOnHome": true,
+      "order": 0,
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.109Z",
+      "updatedAt": "2025-12-17T21:18:01.535Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14c5",
+      "name": "Sprinkles",
+      "slug": "sprinkles",
+      "description": "Colorful sprinkles and edible decorations",
+      "image": "http://localhost:3001/uploads/1766001468627-sn22nkdjs.png",
+      "showInNav": true,
+      "showOnHome": true,
+      "order": 0,
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.108Z",
+      "updatedAt": "2025-12-17T21:17:41.111Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14c6",
+      "name": "Fondant Tools",
+      "slug": "fondant-tools",
+      "description": "Professional fondant tools and cutters",
+      "image": "http://localhost:3001/uploads/1766001481967-995viqlcn.png",
+      "showInNav": true,
+      "showOnHome": true,
+      "order": 0,
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.108Z",
+      "updatedAt": "2025-12-17T19:58:02.785Z"
+    },
+    {
+      "_id": "69430560d09ed22ff13e14c7",
+      "name": "Baking Supplies",
+      "slug": "baking-supplies",
+      "description": "Essential baking supplies and equipment",
+      "image": "http://localhost:3001/uploads/1766001491150-82tb8bs40.png",
+      "showInNav": true,
+      "showOnHome": true,
+      "order": 0,
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.108Z",
+      "updatedAt": "2025-12-17T21:17:43.778Z"
+    }
+  ],
+  "Orders": [
+    {
+      "_id": "6943000e8735b1cc94f41199",
+      "orderId": "ORD-1765998606138",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": "03430641457"
+      },
+      "shipping": {
+        "address": "johar town phase 2 block r3",
+        "city": "narowal",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "6942f05eb7da884938cf2773",
+          "name": "Happy Birthday Gold Topper",
+          "price": 9.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "6943000e8735b1cc94f4119a"
+        }
+      ],
+      "subtotal": 9.95,
+      "shippingCost": 9.95,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 19.9,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "createdAt": "2025-12-17T19:10:06.154Z",
+      "updatedAt": "2025-12-17T19:10:06.154Z",
+      "__v": 0
+    },
+    {
+      "_id": "694305db8735b1cc94f412d8",
+      "orderId": "ORD-1766000091602",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "Village Dongray kalan post office pindi purbian city zafarwal",
+        "city": "NAROWAL",
+        "state": "WA",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14d5",
+          "name": "Silicone Spatula Set",
+          "price": 14.95,
+          "quantity": 4,
+          "customShipping": null,
+          "_id": "694305db8735b1cc94f412d9"
+        }
+      ],
+      "subtotal": 59.8,
+      "shippingCost": 9.95,
+      "promoDiscount": 5.98,
+      "promoCode": "SUMMER10",
+      "total": 63.769999999999996,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "createdAt": "2025-12-17T19:34:51.606Z",
+      "updatedAt": "2025-12-17T19:34:51.606Z",
+      "__v": 0
+    },
+    {
+      "_id": "6943441a6f68cbf1b8255621",
+      "orderId": "ORD-1766016026095",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14d2",
+          "name": "Flower Cutter Set",
+          "price": 18.95,
+          "quantity": 1,
+          "_id": "6943441a6f68cbf1b8255622"
+        },
+        {
+          "productId": "69430560d09ed22ff13e14d4",
+          "name": "Round Cake Pan Set",
+          "price": 39.95,
+          "quantity": 1,
+          "_id": "6943441a6f68cbf1b8255623"
+        }
+      ],
+      "subtotal": 58.900000000000006,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 73.89,
+      "paymentMethod": "card",
+      "status": "delivered",
+      "notes": "",
+      "createdAt": "2025-12-18T00:00:26.117Z",
+      "updatedAt": "2025-12-18T01:24:16.906Z",
+      "__v": 0
+    },
+    {
+      "_id": "6948a8c1af10c274f665a2ce",
+      "orderId": "ORD-1766369473936",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14cb",
+          "name": "Happy Birthday Gold Topper",
+          "price": 9.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "6948a8c1af10c274f665a2cf"
+        }
+      ],
+      "subtotal": 9.95,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 24.939999999999998,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "createdAt": "2025-12-22T02:11:13.944Z",
+      "updatedAt": "2025-12-22T02:11:13.944Z",
+      "__v": 0
+    },
+    {
+      "_id": "694f08b6537e583d1f49aa4e",
+      "orderId": "ORD-1766787254587",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Awais",
+        "lastName": "Niaz",
+        "name": "Awais Niaz",
+        "phone": "03430641457"
+      },
+      "shipping": {
+        "address": "Village dongray kalan post office pindi purbian",
+        "city": "narowal",
+        "state": "",
+        "postcode": "5160"
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14d6",
+          "name": "Piping Bag Set",
+          "price": 16.95,
+          "quantity": 2,
+          "_id": "694f08b6537e583d1f49aa4f"
+        },
+        {
+          "productId": "69430560d09ed22ff13e14d4",
+          "name": "Round Cake Pan Set",
+          "price": 39.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "694f08b6537e583d1f49aa50"
+        }
+      ],
+      "subtotal": 73.85,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 88.83999999999999,
+      "paymentMethod": "card",
+      "status": "cancelled",
+      "notes": "",
+      "createdAt": "2025-12-26T22:14:14.595Z",
+      "updatedAt": "2025-12-26T22:54:46.502Z",
+      "__v": 0,
+      "courier": "other",
+      "deliveryDays": "5-7",
+      "trackingNumber": "456789054",
+      "trackingUrl": "www.tcs.com"
+    },
+    {
+      "_id": "694f2c4a08a384c9399266ab",
+      "orderId": "ORD-1766787254588",
+      "customer": {
+        "email": "Awaisg1066@gmail.com",
+        "firstName": "Awais",
+        "lastName": "Niaz",
+        "name": "Awais Niaz",
+        "phone": "03430641457"
+      },
+      "shipping": {
+        "address": "muhallah rehmanpura street no 2 near anbala bakery",
+        "city": "narowal",
+        "state": "",
+        "postcode": "5160"
+      },
+      "items": [
+        {
+          "productId": "694307648735b1cc94f413ec",
+          "name": "Pooper",
+          "price": 35,
+          "quantity": 1,
+          "_id": "694f2c4a08a384c9399266ac"
+        }
+      ],
+      "subtotal": 35,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 49.99,
+      "paymentMethod": "card",
+      "status": "processing",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2025-12-27T00:46:02.623Z",
+      "updatedAt": "2025-12-27T00:49:43.125Z",
+      "__v": 0
+    },
+    {
+      "_id": "694f2ea1f0233d807bba1823",
+      "orderId": "ORD-1766787254589",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14cb",
+          "name": "Happy Birthday Gold Topper",
+          "price": 9.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "694f2ea1f0233d807bba1824"
+        },
+        {
+          "productId": "69430560d09ed22ff13e14cc",
+          "name": "Wedding Couple Topper",
+          "price": 24.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "694f2ea1f0233d807bba1825"
+        }
+      ],
+      "subtotal": 34.9,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 49.89,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2025-12-27T00:56:01.070Z",
+      "updatedAt": "2025-12-27T00:56:01.070Z",
+      "__v": 0
+    },
+    {
+      "_id": "694f2f31f0233d807bba1941",
+      "orderId": "ORD-1766787254590",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14cf",
+          "name": "Gold Pearl Sprinkles",
+          "price": 9.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "694f2f31f0233d807bba1942"
+        },
+        {
+          "productId": "69430560d09ed22ff13e14cc",
+          "name": "Wedding Couple Topper",
+          "price": 24.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "694f2f31f0233d807bba1943"
+        }
+      ],
+      "subtotal": 34.9,
+      "shippingCost": 14.99,
+      "promoDiscount": 3.49,
+      "promoCode": "SUMMER10",
+      "total": 46.4,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2025-12-27T00:58:25.743Z",
+      "updatedAt": "2025-12-27T00:58:25.743Z",
+      "__v": 0
+    },
+    {
+      "_id": "694f2f68f0233d807bba1971",
+      "orderId": "ORD-1766787254591",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "694307648735b1cc94f413ec",
+          "name": "Pooper",
+          "price": 35,
+          "quantity": 5,
+          "customShipping": 40,
+          "_id": "694f2f68f0233d807bba1972"
+        }
+      ],
+      "subtotal": 175,
+      "shippingCost": 40,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 215,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2025-12-27T00:59:20.022Z",
+      "updatedAt": "2025-12-27T00:59:20.022Z",
+      "__v": 0
+    },
+    {
+      "_id": "694f33dbf0233d807bba1a45",
+      "orderId": "ORD-1766787254592",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14cb",
+          "name": "Happy Birthday Gold Topper",
+          "price": 9.95,
+          "quantity": 8,
+          "_id": "694f33dbf0233d807bba1a46"
+        }
+      ],
+      "subtotal": 79.6,
+      "shippingCost": 0,
+      "promoDiscount": 7.96,
+      "promoCode": "SUMMER10",
+      "total": 71.64,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2025-12-27T01:18:19.758Z",
+      "updatedAt": "2025-12-27T01:18:19.758Z",
+      "__v": 0
+    },
+    {
+      "_id": "694f3eff26313dca52b4143c",
+      "orderId": "ORD-1766787254593",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14cc",
+          "name": "Wedding Couple Topper",
+          "price": 24.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "694f3eff26313dca52b4143d"
+        }
+      ],
+      "subtotal": 24.95,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 39.94,
+      "paymentMethod": "card",
+      "status": "pending",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2025-12-27T02:05:51.858Z",
+      "updatedAt": "2025-12-27T02:05:51.858Z",
+      "__v": 0
+    },
+    {
+      "_id": "694f3fa2844ed6ef39211509",
+      "orderId": "ORD-1766787254594",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14d5",
+          "name": "Silicone Spatula Set",
+          "price": 14.95,
+          "quantity": 1,
+          "customShipping": null,
+          "_id": "694f3fa2844ed6ef3921150a"
+        }
+      ],
+      "subtotal": 14.95,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 29.939999999999998,
+      "paymentMethod": "card",
+      "status": "cancelled",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2025-12-27T02:08:34.744Z",
+      "updatedAt": "2026-02-19T00:05:24.738Z",
+      "__v": 0,
+      "paymentStatus": "pending",
+      "stripePaymentIntentId": "",
+      "stripeSessionId": ""
+    },
+    {
+      "_id": "6996657defc913163649465f",
+      "orderId": "ORD-1766787254595",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14d2",
+          "name": "Flower Cutter Set",
+          "price": 18.95,
+          "quantity": 2,
+          "customShipping": null,
+          "_id": "6996657defc9131636494660"
+        }
+      ],
+      "subtotal": 37.9,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 52.89,
+      "paymentMethod": "card",
+      "paymentStatus": "pending",
+      "stripeSessionId": "",
+      "stripePaymentIntentId": "",
+      "status": "delivered",
+      "notes": "",
+      "trackingNumber": "9999999999999999999",
+      "courier": "dhl",
+      "trackingUrl": "https://www.dhl.com/au-en/home/tracking/tracking-express.html?submit=1&tracking-id=9999999999999999999",
+      "deliveryDays": "3-5",
+      "createdAt": "2026-02-19T01:21:01.920Z",
+      "updatedAt": "2026-02-19T02:28:49.039Z",
+      "__v": 0
+    },
+    {
+      "_id": "6996678cefc9131636494a94",
+      "orderId": "ORD-1766787254596",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "69430560d09ed22ff13e14d5",
+          "name": "Silicone Spatula Set",
+          "price": 14.95,
+          "quantity": 7,
+          "customShipping": null,
+          "_id": "6996678cefc9131636494a95"
+        }
+      ],
+      "subtotal": 104.64999999999999,
+      "shippingCost": 0,
+      "promoDiscount": 15.697499999999998,
+      "promoCode": "SUMMER10",
+      "total": 88.95249999999999,
+      "paymentMethod": "card",
+      "paymentStatus": "pending",
+      "stripeSessionId": "",
+      "stripePaymentIntentId": "",
+      "status": "delivered",
+      "notes": "",
+      "trackingNumber": "121345988",
+      "courier": "australia-post",
+      "trackingUrl": "https://auspost.com.au/mypost/track/#/details/121345988",
+      "deliveryDays": "3-5",
+      "createdAt": "2026-02-19T01:29:48.600Z",
+      "updatedAt": "2026-02-19T02:26:18.019Z",
+      "__v": 0
+    },
+    {
+      "_id": "69967fe589fee8bac2f609c7",
+      "orderId": "ORD-1766787254597",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "694307648735b1cc94f413ec",
+          "name": "Pooper",
+          "price": 40,
+          "quantity": 1,
+          "customShipping": 40,
+          "_id": "69967fe589fee8bac2f609c8"
+        }
+      ],
+      "subtotal": 37,
+      "shippingCost": 40,
+      "promoDiscount": 5.55,
+      "promoCode": "SUMMER10",
+      "total": 71.45,
+      "paymentMethod": "card",
+      "paymentStatus": "pending",
+      "stripeSessionId": "",
+      "stripePaymentIntentId": "",
+      "status": "cancelled",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2026-02-19T03:13:41.396Z",
+      "updatedAt": "2026-02-19T03:14:54.013Z",
+      "__v": 0
+    },
+    {
+      "_id": "6996851d89fee8bac2f614ed",
+      "orderId": "ORD-1766787254598",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "694307648735b1cc94f413ec",
+          "name": "Pooper",
+          "price": 40,
+          "quantity": 3,
+          "customShipping": 40,
+          "_id": "6996851d89fee8bac2f614ee"
+        }
+      ],
+      "subtotal": 111,
+      "shippingCost": 40,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 151,
+      "paymentMethod": "card",
+      "paymentStatus": "pending",
+      "stripeSessionId": "",
+      "stripePaymentIntentId": "",
+      "status": "delivered",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2026-02-19T03:35:57.454Z",
+      "updatedAt": "2026-02-19T03:38:43.479Z",
+      "__v": 0
+    },
+    {
+      "_id": "699692cc2ae5897754b6186b",
+      "orderId": "ORD-1766787254599",
+      "customer": {
+        "email": "awaisg1066@gmail.com",
+        "firstName": "Muhammad",
+        "lastName": "Awais",
+        "name": "Muhammad Awais",
+        "phone": ""
+      },
+      "shipping": {
+        "address": "",
+        "city": "",
+        "state": "",
+        "postcode": ""
+      },
+      "items": [
+        {
+          "productId": "694307648735b1cc94f413ec",
+          "name": "Pooper",
+          "price": 40,
+          "quantity": 1,
+          "_id": "699692cc2ae5897754b6186c"
+        }
+      ],
+      "subtotal": 37,
+      "shippingCost": 14.99,
+      "promoDiscount": 0,
+      "promoCode": null,
+      "total": 51.99,
+      "paymentMethod": "card",
+      "paymentStatus": "pending",
+      "stripeSessionId": "",
+      "stripePaymentIntentId": "",
+      "status": "cancelled",
+      "notes": "",
+      "trackingNumber": "",
+      "courier": "",
+      "trackingUrl": "",
+      "deliveryDays": "",
+      "createdAt": "2026-02-19T04:34:20.338Z",
+      "updatedAt": "2026-02-19T06:01:19.951Z",
+      "__v": 0
+    }
+  ],
+  "Testimonials": [
+    {
+      "_id": "69430560d09ed22ff13e14dd",
+      "name": "Sarah Mitchell",
+      "location": "Sydney, NSW",
+      "text": "Absolutely love the quality of supplies from DecoraBake! The sprinkles are vibrant and the fondant tools are professional grade.",
+      "rating": 5,
+      "avatar": "",
+      "enabled": true,
+      "__v": 0,
+      "createdAt": "2025-12-17T19:32:48.963Z",
+      "updatedAt": "2025-12-17T19:32:48.963Z"
+    },
+    {
+      "_id": "6996560365339c466c53237b",
+      "name": "Awais",
+      "location": "Sydney",
+      "text": "Absolutely love the quality of supplies from DecoraBake! The sprinkles are vibrant and the fondant tools are professional grade",
+      "rating": 5,
+      "avatar": "",
+      "enabled": true,
+      "createdAt": "2026-02-19T00:14:59.394Z",
+      "updatedAt": "2026-02-19T04:43:10.617Z",
+      "__v": 0
+    }
+  ],
+  "Pages": [
+    {
+      "_id": "699656b065339c466c532402",
+      "slug": "contact",
+      "title": "Contact",
+      "content": "{\"email\":\"decorabake@gmail.com\",\"phone\":\"+61 416 636 927\",\"address\":\"Sydney, NSW, Australia\",\"businessHours\":\"Mon - Fri 9:00 AM - 5:00 PM AEST\\nSat 10:00 AM - 2:00 PM AEST\\nSun Closed\",\"heroSubtitle\":\"We'd love to hear from you! Whether you have a question, feedback, or just want to say hello.\"}",
+      "metaDescription": "",
+      "isPublished": true,
+      "type": "page",
+      "featuredImage": "",
+      "excerpt": "",
+      "createdAt": "2026-02-19T00:17:52.791Z",
+      "updatedAt": "2026-02-19T03:23:32.803Z",
+      "__v": 0
+    }
+  ],
+  "PromoCodes": [
+    {
+      "_id": "6943034b8735b1cc94f411c9",
+      "code": "SUMMER10",
+      "discountType": "percentage",
+      "discountValue": 15,
+      "usageLimit": 100,
+      "usageCount": 5,
+      "minOrder": 23,
+      "expiryDate": "2026-03-02T00:00:00.000Z",
+      "active": true,
+      "createdAt": "2025-12-17T19:23:55.985Z",
+      "updatedAt": "2026-02-19T03:13:41.691Z",
+      "__v": 0
+    }
+  ],
+  "Subscribers": [
+    {
+      "_id": "699664ee3e5f96399c8cac2e",
+      "email": "awaisg1066@gmail.com",
+      "__v": 0,
+      "createdAt": "2026-02-19T01:18:38.085Z",
+      "firstName": "",
+      "isActive": true,
+      "lastName": "",
+      "source": "newsletter",
+      "tags": [],
+      "updatedAt": "2026-02-19T01:18:38.085Z"
+    }
+  ],
+  "Reviews": []
+}

@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema({
     lastName: { type: String, required: true, trim: true },
     phone: { type: String, default: '' },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
+    avatar: { type: String, default: '' },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpiry: { type: Date, default: null },
     addresses: [{
         label: String,
         address: String,
@@ -22,6 +25,11 @@ const userSchema = new mongoose.Schema({
 userSchema.index({ role: 1 })
 
 userSchema.pre('save', async function (next) {
+    // Auto-generate avatar for new users
+    if (this.isNew && !this.avatar) {
+        const seed = encodeURIComponent(`${this.firstName} ${this.lastName}`)
+        this.avatar = `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=6B2346&textColor=ffffff&fontSize=42`
+    }
     if (!this.isModified('password')) return next()
     this.password = await bcrypt.hash(this.password, 12)
     next()
@@ -65,14 +73,20 @@ const productSchema = new mongoose.Schema({
     isFeatured: { type: Boolean, default: false },
     customShipping: { type: Number, default: null },
     variants: [{
-        name: String,
-        price: Number,
-        stock: Number
+        name: { type: String, default: '' },
+        price: { type: Number, default: 0 },
+        salePrice: { type: Number, default: null },
+        stock: { type: Number, default: 100 },
+        sku: { type: String, default: '' },
+        image: { type: String, default: '' },
+        enabled: { type: Boolean, default: true }
     }],
     enabled: { type: Boolean, default: true }
 }, { timestamps: true })
 
 productSchema.index({ category: 1, enabled: 1 })
+productSchema.index({ categoryId: 1, enabled: 1 })
+productSchema.index({ name: 1 })
 productSchema.index({ isFeatured: 1 })
 productSchema.index({ isNew: 1 })
 productSchema.index({ price: 1 })
@@ -121,13 +135,17 @@ const orderSchema = new mongoose.Schema({
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
     stripeSessionId: { type: String, default: '' },
     stripePaymentIntentId: { type: String, default: '' },
+    stripeInvoiceId: { type: String, default: '' },
+    stripeInvoiceUrl: { type: String, default: '' },
     status: { type: String, enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'], default: 'pending' },
     notes: { type: String, default: '' },
     // Shipping/Tracking Info
     trackingNumber: { type: String, default: '' },
     courier: { type: String, default: '' },
     trackingUrl: { type: String, default: '' },
-    deliveryDays: { type: String, default: '' }
+    deliveryDays: { type: String, default: '' },
+    bankReceiptUrl: { type: String, default: '' },
+    isGuestOrder: { type: Boolean, default: false }
 }, { timestamps: true })
 
 orderSchema.index({ 'customer.email': 1 })
@@ -205,6 +223,8 @@ const settingsSchema = new mongoose.Schema({
     chatbotEnabled: { type: Boolean, default: true },
     geminiApiKey: { type: String, default: '' },
     longcatApiKey: { type: String, default: '' },
+    qwenApiKey: { type: String, default: '' },
+    openRouterApiKey: { type: String, default: '' },
     whatsappEnabled: { type: Boolean, default: false },
     whatsappNumber: { type: String, default: '' },
     // Email Settings
@@ -219,11 +239,40 @@ const settingsSchema = new mongoose.Schema({
     adminEmail: { type: String, default: '' }, // Admin receives notifications for new orders/refunds
     siteUrl: { type: String, default: 'http://localhost:5173' },
     // Email Templates enabled
+    // Payment Methods
+    paymentStripeEnabled: { type: Boolean, default: true },
+    paymentBankTransferEnabled: { type: Boolean, default: false },
+    bankName: { type: String, default: '' },
+    bankAccountName: { type: String, default: '' },
+    bankBSB: { type: String, default: '' },
+    bankAccountNumber: { type: String, default: '' },
+    bankInstructions: { type: String, default: 'Please use your Order ID as the payment reference. Orders will be processed once payment is verified (1-2 business days).' },
     sendOrderConfirmation: { type: Boolean, default: true },
     sendWelcomeEmail: { type: Boolean, default: true },
     sendShippingNotification: { type: Boolean, default: true },
     sendAdminOrderNotification: { type: Boolean, default: true },
-    sendAdminRefundNotification: { type: Boolean, default: true }
+    sendAdminRefundNotification: { type: Boolean, default: true },
+    // Email template branding
+    emailLogo: { type: String, default: '' },
+    emailShowTextLogo: { type: Boolean, default: false },
+    emailFooterText: { type: String, default: '' },
+    emailFooterEmail: { type: String, default: '' },
+    adminNotificationEmail: { type: String, default: '' },
+    // ImageKit — Cloud Image Storage
+    imagekitEnabled: { type: Boolean, default: false },
+    imagekitPublicKey: { type: String, default: '' },
+    imagekitPrivateKey: { type: String, default: '' },
+    imagekitUrlEndpoint: { type: String, default: '' },
+    // Homepage section visibility
+    homeSections: {
+        heroSlider: { type: Boolean, default: true },
+        trustFeatures: { type: Boolean, default: true },
+        featuredProducts: { type: Boolean, default: true },
+        categoryCircles: { type: Boolean, default: true },
+        productGrid: { type: Boolean, default: true },
+        promoSection: { type: Boolean, default: true },
+        testimonials: { type: Boolean, default: true }
+    }
 }, { timestamps: true })
 
 export const Settings = mongoose.model('Settings', settingsSchema)
@@ -245,7 +294,8 @@ const cartSchema = new mongoose.Schema({
         price: { type: Number },
         salePrice: { type: Number },
         image: { type: String },
-        quantity: { type: Number, default: 1 }
+        quantity: { type: Number, default: 1 },
+        customShipping: { type: Number, default: 0 }
     }]
 }, { timestamps: true })
 
@@ -301,13 +351,14 @@ const refundSchema = new mongoose.Schema({
     reason: { type: String, required: true },
     status: {
         type: String,
-        enum: ['pending', 'reviewing', 'approved', 'denied', 'processed'],
+        enum: ['pending', 'reviewing', 'approved', 'denied', 'completed'],
         default: 'pending'
     },
     // Messages between admin and customer
     messages: [{
         from: { type: String, enum: ['admin', 'customer'], required: true },
         message: { type: String, required: true },
+        images: [{ type: String }],
         date: { type: Date, default: Date.now }
     }],
     adminNotes: { type: String, default: '' },
@@ -365,3 +416,52 @@ supportChatSchema.index({ lastMessage: -1 })
 export const SupportChat = mongoose.model('SupportChat', supportChatSchema)
 
 
+// ═══════════════════════════════════════════
+// SUBSCRIBER (Newsletter)
+// ═══════════════════════════════════════════
+const subscriberSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    firstName: { type: String, default: '' },
+    lastName: { type: String, default: '' },
+    source: { type: String, enum: ['newsletter', 'register', 'purchase', 'import', 'manual'], default: 'newsletter' },
+    isActive: { type: Boolean, default: true },
+    tags: [{ type: String }]
+}, { timestamps: true })
+
+subscriberSchema.index({ email: 1 })
+subscriberSchema.index({ source: 1 })
+subscriberSchema.index({ isActive: 1 })
+
+export const Subscriber = mongoose.model('Subscriber', subscriberSchema)
+
+
+// ═══════════════════════════════════════════
+// EMAIL CAMPAIGN
+// ═══════════════════════════════════════════
+const emailCampaignSchema = new mongoose.Schema({
+    subject: { type: String, required: true },
+    body: { type: String, required: true },
+    filter: { type: String, enum: ['all', 'newsletter', 'register', 'purchase', 'import'], default: 'all' },
+    status: { type: String, enum: ['draft', 'sending', 'sent', 'failed'], default: 'draft' },
+    totalRecipients: { type: Number, default: 0 },
+    sentCount: { type: Number, default: 0 },
+    failedCount: { type: Number, default: 0 },
+    scheduledAt: { type: Date },
+    completedAt: { type: Date }
+}, { timestamps: true })
+
+export const EmailCampaign = mongoose.model('EmailCampaign', emailCampaignSchema)
+
+// ═══════════════════════════════════════════
+// EMAIL TEMPLATE CUSTOMIZATION
+// ═══════════════════════════════════════════
+const emailTemplateSchema = new mongoose.Schema({
+    type: { type: String, required: true, unique: true },
+    subject: { type: String, default: '' },
+    headerText: { type: String, default: '' },
+    footerText: { type: String, default: '' },
+    bodyContent: { type: String }, // Stores the full HTML body template with variables
+    enabled: { type: Boolean, default: true }
+}, { timestamps: true })
+
+export const EmailTemplate = mongoose.model('EmailTemplate', emailTemplateSchema)

@@ -13,7 +13,7 @@ function useWindowSize() {
 }
 
 function ProductCard({ product }) {
-    const { addToCart, cartCount } = useCart()
+    const { addToCart, setCartDrawerOpen } = useCart()
     const [isHovered, setIsHovered] = useState(false)
     const [added, setAdded] = useState(false)
     const width = useWindowSize()
@@ -29,22 +29,26 @@ function ProductCard({ product }) {
         addToCart(product)
         setAdded(true)
         setTimeout(() => setAdded(false), 1500)
+        setCartDrawerOpen(true)
     }
 
     const styles = {
         card: {
             background: '#fff',
-            borderRadius: '16px',
+            borderRadius: '20px',
             overflow: 'hidden',
-            border: '1px solid #eee',
-            transition: 'all 0.3s ease',
-            transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
-            boxShadow: isHovered ? '0 15px 40px rgba(0,0,0,0.12)' : '0 2px 10px rgba(0,0,0,0.04)',
-            position: 'relative'
+            border: '1px solid #f0f0f0',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+            boxShadow: isHovered ? '0 12px 32px rgba(0,0,0,0.08)' : '0 4px 16px rgba(0,0,0,0.02)',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%'
         },
         imageWrapper: {
             position: 'relative',
-            paddingTop: '100%',
+            paddingTop: '75%', // Changed from 100% to 75% for a shorter, landscape image frame
             overflow: 'hidden',
             background: '#f8f8f8'
         },
@@ -56,7 +60,7 @@ function ProductCard({ product }) {
             height: '100%',
             objectFit: 'cover',
             transition: 'transform 0.5s ease',
-            transform: isHovered ? 'scale(1.08)' : 'scale(1)'
+            transform: isHovered ? 'scale(1.05)' : 'scale(1)'
         },
         badges: {
             position: 'absolute',
@@ -68,78 +72,101 @@ function ProductCard({ product }) {
             zIndex: 2
         },
         badge: {
-            padding: '6px 12px',
-            borderRadius: '20px',
+            padding: '4px 10px',
+            borderRadius: '8px',
             fontSize: '11px',
-            fontWeight: '700',
+            fontWeight: '800',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
         },
-        badgeSale: { background: '#6B2346', color: '#fff' },
-        badgeNew: { background: '#C9A865', color: '#fff' },
-        badgeOutOfStock: { background: '#333', color: '#fff' },
-        content: { padding: '16px' },
+        badgeSale: { background: '#EF4444', color: '#fff' },
+        badgeNew: { background: '#1a1a1a', color: '#fff' },
+        badgeOutOfStock: { background: '#64748b', color: '#fff' },
+        content: {
+            padding: isMobile ? '8px 12px' : '12px',
+            flex: '1 1 auto',
+            display: 'flex',
+            flexDirection: 'column'
+        },
         name: {
             fontFamily: "'Poppins', sans-serif",
-            fontSize: isMobile ? '14px' : '15px',
+            fontSize: '14px',
             fontWeight: '600',
-            color: '#222',
-            marginBottom: '8px',
+            color: '#1a1a1a',
+            marginBottom: isMobile ? '4px' : '6px',
             lineHeight: '1.4',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            minHeight: '40px'
+            overflow: 'hidden'
         },
-        priceRow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' },
-        price: { fontSize: isMobile ? '18px' : '20px', fontWeight: '700', color: '#6B2346' },
-        originalPrice: { fontSize: '14px', color: '#999', textDecoration: 'line-through' },
+        category: {
+            fontSize: '11px',
+            color: '#888',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            marginBottom: '4px',
+            fontWeight: '600'
+        },
+        priceRow: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginTop: 'auto',
+            marginBottom: isMobile ? '8px' : '16px'
+        },
+        price: { fontSize: '16px', fontWeight: '800', color: '#6B2346' },
+        originalPrice: { fontSize: '13px', color: '#999', textDecoration: 'line-through' },
+        addToCartContainer: {
+            marginTop: '12px',
+            width: '100%'
+        },
         addToCart: {
             width: '100%',
             padding: '12px',
-            background: added ? '#2E7D32' : '#6B2346',
+            borderRadius: '10px',
+            background: added ? '#10B981' : '#6B2346',
             color: '#fff',
             border: 'none',
-            borderRadius: '10px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '8px',
-            transition: 'all 0.3s ease'
+            cursor: 'pointer',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            fontSize: isMobile ? '12px' : '13px',
+            fontWeight: '700',
+            boxSizing: 'border-box'
+        },
+        addToCartHover: {
+            background: '#8B3A5E'
         },
         outOfStock: {
-            width: '100%',
-            padding: '12px',
-            background: '#f5f5f5',
-            color: '#888',
+            padding: '6px 12px',
+            background: '#F1F5F9',
+            color: '#64748b',
             border: 'none',
-            borderRadius: '10px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'not-allowed'
+            borderRadius: '12px',
+            fontSize: '11px',
+            fontWeight: '700',
+            cursor: 'not-allowed',
+            textAlign: 'center'
         }
     }
 
     const isOutOfStock = product.stock !== undefined && product.stock <= 0
 
     return (
-        <Link
-            to={`/product/${product.id}`}
-            style={{ textDecoration: 'none' }}
+        <div style={styles.card}
             onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
-            <div style={styles.card}>
+            onMouseLeave={() => setIsHovered(false)}>
+            <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', flex: '1 1 auto', display: 'flex', flexDirection: 'column' }}>
                 <div style={styles.imageWrapper}>
                     <img
                         src={mainImage}
                         alt={product.name}
                         style={styles.image}
-                        onError={(e) => e.target.src = '/hero-bg.png'}
+                        onError={(e) => e.target.src = '/placeholder.svg'}
                     />
                     <div style={styles.badges}>
                         {product.isNew && <span style={{ ...styles.badge, ...styles.badgeNew }}>New</span>}
@@ -148,31 +175,49 @@ function ProductCard({ product }) {
                     </div>
                 </div>
                 <div style={styles.content}>
+                    <div style={styles.category}>{product.category || 'Bakeware'}</div>
                     <h3 style={styles.name}>{product.name}</h3>
-                    <div style={styles.priceRow}>
-                        <span style={styles.price}>${price?.toFixed(2)}</span>
-                        {originalPrice && <span style={styles.originalPrice}>${originalPrice?.toFixed(2)}</span>}
-                    </div>
-                    {isOutOfStock ? (
-                        <button style={styles.outOfStock} disabled>Out of Stock</button>
-                    ) : (
-                        <button style={styles.addToCart} onClick={handleAddToCart}>
-                            {added ? (
-                                <>✓ Added!</>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', marginTop: 'auto' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                            {originalPrice && <div style={styles.originalPrice}>${originalPrice?.toFixed(2)}</div>}
+                            <div style={styles.price}>${price?.toFixed(2)}</div>
+                        </div>
+
+                        <div onClick={(e) => e.preventDefault()} style={styles.addToCartContainer}>
+                            {isOutOfStock ? (
+                                <div style={{ ...styles.outOfStock, width: '100%', padding: '12px', boxSizing: 'border-box' }}>Sold Out</div>
                             ) : (
-                                <>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                                    </svg>
-                                    Add to Cart
-                                </>
+                                <button
+                                    style={{
+                                        ...styles.addToCart,
+                                        ...(isHovered && !added ? styles.addToCartHover : {})
+                                    }}
+                                    onClick={handleAddToCart}
+                                    title="Add to Cart"
+                                >
+                                    {added ? (
+                                        <>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            Added to Cart
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                            </svg>
+                                            Add to Cart
+                                        </>
+                                    )}
+                                </button>
                             )}
-                        </button>
-                    )}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+        </div>
     )
 }
 

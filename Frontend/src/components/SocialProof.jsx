@@ -1,117 +1,257 @@
 import { useState, useEffect } from 'react'
+import API_BASE_URL from '../config/api'
 
-/**
- * Social proof "Recently Purchased" notification
- * Shows simulated purchase notifications to create urgency
- */
+// Common Australian first names, last names, and cities to generate realistic names
+const firstNames = [
+    'Sarah', 'Emma', 'Olivia', 'Ava', 'Charlotte', 'Mia', 'Amelia', 'Harper',
+    'Ella', 'Isabella', 'Sophia', 'Grace', 'Lily', 'Chloe', 'Zoe', 'Isla',
+    'Oliver', 'Noah', 'Leo', 'William', 'Henry', 'Jack', 'Theodore', 'Hudson',
+    'Charlie', 'Thomas', 'Lucas', 'Liam', 'Alexander', 'Ethan', 'Mason', 'Harrison'
+]
+
+const lastNames = [
+    'Alex', 'Smith', 'Jones', 'Williams', 'Brown', 'Wilson', 'Taylor', 'Johnson',
+    'Martin', 'White', 'Anderson', 'Thompson', 'Walker', 'Harris', 'Ryan',
+    'Robinson', 'Kelly', 'Davis', 'Simpson', 'Wright', 'Patterson'
+]
+
+const cities = [
+    'Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Gold Coast',
+    'Canberra', 'Hobart', 'Darwin', 'Newcastle', 'Wollongong', 'Geelong'
+]
+
+// Fallbacks in case backend API is not available or has empty inventory
+const fallbackProducts = [
+    'Cake Board', 'Fondant Rolling Set', 'Rainbow Sprinkle Mix', 'Piping Tip Collection',
+    'Edible Gold Leaf', 'Cake Turntable Pro', 'Silicone Mould Set',
+    'Food Colouring Gel Pack', 'Cake Leveler', 'Flower Nail Kit',
+    'Ganache Drip Bottle', 'Buttercream Smoother', 'Wafer Paper Sheets'
+]
+
+// Sleek Feather Eye Icon SVG for View notifications
+const EyeIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+    </svg>
+)
+
+// Sleek Feather Shopping Bag Icon SVG for Purchase notifications
+const ShoppingBagIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+)
+
 function SocialProof() {
+    const [productsList, setProductsList] = useState(fallbackProducts)
     const [notification, setNotification] = useState(null)
     const [visible, setVisible] = useState(false)
     const [dismissed, setDismissed] = useState(false)
 
-    const names = [
-        'Sarah from Sydney', 'Emma from Melbourne', 'Olivia from Brisbane',
-        'Ava from Perth', 'Charlotte from Adelaide', 'Mia from Gold Coast',
-        'Amelia from Canberra', 'Harper from Hobart', 'Ella from Darwin',
-        'Isabella from Newcastle', 'Sophia from Wollongong', 'Grace from Geelong',
-        'Lily from Cairns', 'Chloe from Townsville', 'Zoe from Toowoomba'
-    ]
+    // Fetch active products from inventory database on mount
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/api/products`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.products && data.products.length > 0) {
+                    // Only include active and in-stock products
+                    const available = data.products
+                        .filter(p => p.enabled !== false && p.stock > 0)
+                        .map(p => p.name)
+                    if (available.length > 0) {
+                        setProductsList(available)
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching inventory products for social proof:', err)
+            })
+    }, [])
 
-    const products = [
-        'Fondant Rolling Set', 'Rainbow Sprinkle Mix', 'Piping Tip Collection',
-        'Edible Gold Leaf', 'Cake Turntable Pro', 'Silicone Mould Set',
-        'Food Colouring Gel Pack', 'Cake Leveler', 'Flower Nail Kit',
-        'Ganache Drip Bottle', 'Buttercream Smoother', 'Wafer Paper Sheets'
-    ]
-
-    const timesAgo = ['2 minutes ago', '5 minutes ago', '8 minutes ago', '12 minutes ago', '15 minutes ago', '23 minutes ago', '35 minutes ago', '1 hour ago']
-
+    // Loop through notifications
     useEffect(() => {
         if (dismissed) return
 
         const showNotification = () => {
-            const name = names[Math.floor(Math.random() * names.length)]
-            const product = products[Math.floor(Math.random() * products.length)]
+            if (productsList.length === 0) return
+
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
+            const city = cities[Math.floor(Math.random() * cities.length)]
+            
+            // Randomize name pattern (e.g. "Sarah Alex" or "Sarah Alex from Sydney")
+            const name = Math.random() > 0.4
+                ? `${firstName} ${lastName} from ${city}`
+                : `${firstName} ${lastName}`
+
+            const product = productsList[Math.floor(Math.random() * productsList.length)]
+            
+            // Randomize notification action (50% views, 50% purchases)
+            const type = Math.random() > 0.5 ? 'view' : 'purchase'
+            
+            const timesAgo = ['just now', '1 minute ago', '2 minutes ago', '3 minutes ago', '5 minutes ago']
             const time = timesAgo[Math.floor(Math.random() * timesAgo.length)]
 
-            setNotification({ name, product, time })
+            setNotification({ name, product, time, type })
             setVisible(true)
 
-            // Auto-hide after 5 seconds
+            // Auto-hide after 6 seconds
             setTimeout(() => {
                 setVisible(false)
-            }, 5000)
+            }, 6000)
         }
 
-        // First notification after 20 seconds
-        const firstTimer = setTimeout(showNotification, 20000)
+        // Show first notification after 6 seconds on initial load
+        const firstTimer = setTimeout(showNotification, 6000)
 
-        // Then every 30-60 seconds
+        // Then repeat every 25-45 seconds
         const interval = setInterval(() => {
             if (!dismissed) showNotification()
-        }, 30000 + Math.random() * 30000)
+        }, 25000 + Math.random() * 20000)
 
         return () => {
             clearTimeout(firstTimer)
             clearInterval(interval)
         }
-    }, [dismissed])
+    }, [dismissed, productsList])
 
     if (!notification || dismissed) return null
 
     const isMobile = window.innerWidth < 768
+    const isViewType = notification.type === 'view'
+
+    // Premium styling config based on action type
+    const config = isViewType
+        ? {
+            iconColor: '#0d9488', // Premium Teal
+            iconBg: 'linear-gradient(135deg, #F0FDF4, #CCFBF1)',
+            actionText: 'just viewed',
+            badgeText: 'Live Activity',
+            badgeBg: '#E0F2FE',
+            badgeColor: '#0369a1',
+            icon: <EyeIcon />
+        }
+        : {
+            iconColor: '#6B2346', // Plum
+            iconBg: 'linear-gradient(135deg, #FCE8ED, #F8CCD6)',
+            actionText: 'just purchased',
+            badgeText: 'Verified Purchase',
+            badgeBg: '#FCE8ED',
+            badgeColor: '#6B2346',
+            icon: <ShoppingBagIcon />
+        }
 
     return (
-        <>
+        <div style={{
+            position: 'fixed',
+            bottom: isMobile ? '80px' : '24px',
+            left: isMobile ? '12px' : '24px',
+            maxWidth: isMobile ? 'calc(100% - 24px)' : '350px',
+            background: 'rgba(255, 255, 255, 0.92)',
+            backdropFilter: 'blur(12px)',
+            borderRadius: '16px',
+            boxShadow: '0 10px 40px rgba(107, 35, 70, 0.12)',
+            padding: '14px 16px',
+            zIndex: 9998,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
+            transform: visible ? 'translateY(0) scale(1)' : 'translateY(120px) scale(0.95)',
+            opacity: visible ? 1 : 0,
+            transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            border: '1px solid rgba(107, 35, 70, 0.08)'
+        }}>
+            {/* Action Icon Badge */}
             <div style={{
-                position: 'fixed',
-                bottom: isMobile ? '80px' : '24px',
-                left: isMobile ? '12px' : '24px',
-                maxWidth: isMobile ? 'calc(100% - 24px)' : '340px',
-                background: '#fff',
-                borderRadius: '14px',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-                padding: '16px',
-                zIndex: 9998,
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                background: config.iconBg,
+                color: config.iconColor,
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px',
-                transform: visible ? 'translateY(0)' : 'translateY(120%)',
-                opacity: visible ? 1 : 0,
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: '1px solid #f0f0f0'
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.03)'
             }}>
-                {/* Shopping bag icon */}
-                <div style={{
-                    width: '42px', height: '42px', borderRadius: '10px',
-                    background: 'linear-gradient(135deg, #FCE8ED, #f5d5de)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-                }}>
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="#6B2346">
-                        <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 14H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v10z" />
-                    </svg>
-                </div>
-
-                <div style={{ flex: 1 }}>
-                    <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#222', fontWeight: '600', lineHeight: '1.4' }}>
-                        {notification.name}
-                    </p>
-                    <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#555', lineHeight: '1.3' }}>
-                        purchased <strong style={{ color: '#6B2346' }}>{notification.product}</strong>
-                    </p>
-                    <p style={{ margin: 0, fontSize: '11px', color: '#aaa' }}>
-                        {notification.time} • ✓ Verified Purchase
-                    </p>
-                </div>
-
-                <button
-                    onClick={() => setDismissed(true)}
-                    style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '0', fontSize: '16px', lineHeight: 1 }}
-                >
-                    ✕
-                </button>
+                {config.icon}
             </div>
-        </>
+
+            {/* Notification content */}
+            <div style={{ flex: 1, fontFamily: "'Poppins', sans-serif" }}>
+                <p style={{
+                    margin: '0 0 2px 0',
+                    fontSize: '12.5px',
+                    color: '#222',
+                    fontWeight: '600',
+                    lineHeight: '1.4'
+                }}>
+                    {notification.name}
+                </p>
+                <p style={{
+                    margin: '0 0 6px 0',
+                    fontSize: '13px',
+                    color: '#444',
+                    lineHeight: '1.3'
+                }}>
+                    {config.actionText} <strong style={{ color: config.iconColor, fontWeight: '600' }}>{notification.product}</strong>
+                </p>
+                
+                {/* Meta details footer row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '10.5px', color: '#888' }}>
+                        {notification.time}
+                    </span>
+                    <span style={{
+                        fontSize: '9.5px',
+                        fontWeight: '600',
+                        padding: '2px 8px',
+                        borderRadius: '10px',
+                        background: config.badgeBg,
+                        color: config.badgeColor,
+                        letterSpacing: '0.2px'
+                    }}>
+                        {config.badgeText}
+                    </span>
+                </div>
+            </div>
+
+            {/* Close Button */}
+            <button
+                onClick={() => setDismissed(true)}
+                style={{
+                    background: 'rgba(0,0,0,0.03)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '20px',
+                    height: '20px',
+                    color: '#888',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '10px',
+                    transition: 'all 0.2s',
+                    padding: 0,
+                    alignSelf: 'flex-start',
+                    marginTop: '-2px',
+                    marginRight: '-4px'
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(0,0,0,0.08)'
+                    e.currentTarget.style.color = '#333'
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(0,0,0,0.03)'
+                    e.currentTarget.style.color = '#888'
+                }}
+            >
+                ✕
+            </button>
+        </div>
     )
 }
 

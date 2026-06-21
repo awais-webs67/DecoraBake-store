@@ -17,7 +17,7 @@ function useWindowSize() {
 
 function Wishlist() {
     const { items, removeFromWishlist, clearWishlist } = useWishlist()
-    const { addToCart } = useCart()
+    const { addToCart, setCartDrawerOpen } = useCart()
     const { showToast } = useToast()
     const width = useWindowSize()
     const isMobile = width < 768
@@ -27,6 +27,7 @@ function Wishlist() {
     const handleAddToCart = (product) => {
         addToCart(product, 1)
         showToast(`${product.name} added to cart!`, 'success')
+        setCartDrawerOpen(true)
     }
 
     const handleRemove = (id, name) => {

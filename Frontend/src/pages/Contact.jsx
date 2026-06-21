@@ -252,6 +252,16 @@ function Contact() {
                         grid-template-columns: 1fr 1fr !important;
                         margin-top: -50px !important;
                     }
+                    .contact-form-card {
+                        padding: 20px 16px !important;
+                    }
+                }
+                @media (max-width: 600px) {
+                    .contact-form-row {
+                        grid-template-columns: 1fr !important;
+                        gap: 12px !important;
+                        margin-bottom: 12px !important;
+                    }
                 }
                 @media (max-width: 480px) {
                     .cards-overlap-grid {
@@ -324,7 +334,7 @@ function Contact() {
                         <p style={{ color: '#666', fontSize: '15px', marginBottom: '32px' }}>Fill out the form below and our pastry advisers will respond within 24 hours.</p>
                         
                         <form onSubmit={handleSubmit}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                            <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
                                 <div>
                                     <label className="contact-label">Full Name *</label>
                                     <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="John Doe" className="contact-input" />
@@ -334,7 +344,7 @@ function Contact() {
                                     <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="john@example.com" className="contact-input" />
                                 </div>
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                            <div className="contact-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
                                 <div>
                                     <label className="contact-label">Phone Number</label>
                                     <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="+61 400 000 000" className="contact-input" />

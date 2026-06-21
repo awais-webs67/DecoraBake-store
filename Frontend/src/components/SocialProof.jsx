@@ -50,6 +50,14 @@ function SocialProof() {
     const [notification, setNotification] = useState(null)
     const [visible, setVisible] = useState(false)
     const [dismissed, setDismissed] = useState(false)
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+    // Listen to window resize to determine if mobile
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768)
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
 
     // Fetch active products from inventory database on mount
     useEffect(() => {
@@ -71,9 +79,9 @@ function SocialProof() {
             })
     }, [])
 
-    // Loop through notifications with randomized delays (e.g., 2 to 5 minutes)
+    // Loop through notifications with randomized delays between 3 to 5 minutes
     useEffect(() => {
-        if (dismissed) return
+        if (dismissed || isMobile) return
 
         let timerId = null
 
@@ -109,23 +117,23 @@ function SocialProof() {
         const triggerNext = (delay) => {
             timerId = setTimeout(() => {
                 showNotification()
-                // Random delay for next popup: between 2 minutes (120000ms) and 5 minutes (300000ms)
-                const nextDelay = 120000 + Math.random() * 180000
+                // Random delay for next popup: between 3 minutes (180000ms) and 5 minutes (300000ms)
+                const nextDelay = 180000 + Math.random() * 120000
                 triggerNext(nextDelay)
             }, delay)
         }
 
-        // Show first notification after 40 seconds on initial load
-        triggerNext(40000)
+        // Show first notification after a random 3 to 5 minutes delay on initial load
+        const initialDelay = 180000 + Math.random() * 120000
+        triggerNext(initialDelay)
 
         return () => {
             if (timerId) clearTimeout(timerId)
         }
-    }, [dismissed, productsList])
+    }, [dismissed, productsList, isMobile])
 
-    if (!notification || dismissed) return null
+    if (isMobile || dismissed || !notification) return null
 
-    const isMobile = window.innerWidth < 768
     const isViewType = notification.type === 'view'
 
     // Premium styling config based on action type

@@ -99,10 +99,10 @@ function Privacy() {
 
             {/* Main Content Area */}
             <section style={{ maxWidth: '1100px', margin: '50px auto 100px', padding: '0 20px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '40px', alignItems: 'start' }}>
+                <div className="privacy-layout" style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '40px', alignItems: 'start' }}>
                     
                     {/* Navigation Sidebar (Sticky) */}
-                    <div style={{ position: 'sticky', top: '100px', alignSelf: 'start' }}>
+                    <div className="privacy-sidebar" style={{ position: 'sticky', top: '100px', alignSelf: 'start' }}>
                         <div style={{ background: '#fff', borderRadius: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', border: '1px solid #f0f0f0' }}>
                             <h3 style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: '#6B2346', marginBottom: '16px', fontWeight: '700' }}>Document Sections</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -150,7 +150,7 @@ function Privacy() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
                         
                         {/* Summary Intro Card */}
-                        <div style={{ background: 'linear-gradient(135deg, #FFF5F7 0%, #FFF 100%)', borderRadius: '24px', padding: '32px', border: '1px solid #FCE8ED', boxShadow: '0 4px 20px rgba(107,35,70,0.02)' }}>
+                        <div className="privacy-summary-card" style={{ background: 'linear-gradient(135deg, #FFF5F7 0%, #FFF 100%)', borderRadius: '24px', padding: '32px', border: '1px solid #FCE8ED', boxShadow: '0 4px 20px rgba(107,35,70,0.02)' }}>
                             <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#6B2346', marginBottom: '8px' }}>Privacy Overview</h3>
                             <p style={{ fontSize: '15px', color: '#4A4A4A', lineHeight: '1.7', margin: 0 }}>
                                 We only collect information necessary to fulfill your orders, communicate delivery updates, and support your experience on {siteName}. We <strong>never</strong> sell your personal data to third-party advertisers. All transaction and card details are encrypted securely via Stripe.
@@ -161,6 +161,7 @@ function Privacy() {
                             <div 
                                 key={i} 
                                 id={`privacy-${i}`}
+                                className="privacy-card"
                                 style={{
                                     background: '#fff', 
                                     borderRadius: '24px', 
@@ -209,12 +210,19 @@ function Privacy() {
                 {/* Mobile Responsive overrides */}
                 <style>{`
                     @media (max-width: 768px) {
-                        section > div[style*="grid-template-columns: 300px"] {
+                        .privacy-layout {
                             grid-template-columns: 1fr !important;
                             gap: 20px !important;
                         }
-                        section > div > div:first-child {
+                        .privacy-sidebar {
                             position: static !important;
+                            margin-bottom: 20px;
+                        }
+                        .privacy-summary-card {
+                            padding: 20px !important;
+                        }
+                        .privacy-card {
+                            padding: 20px 16px !important;
                         }
                     }
                 `}</style>

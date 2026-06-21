@@ -82,10 +82,10 @@ function SearchOverlay({ isOpen, onClose }) {
     if (!isOpen) return null
 
     return (
-        <div style={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div style={styles.container}>
+        <div className="search-overlay" style={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
+            <div className="search-overlay-container" style={styles.container}>
                 {/* Search Input */}
-                <form onSubmit={handleSubmit} style={styles.searchForm}>
+                <form onSubmit={handleSubmit} className="search-overlay-form" style={styles.searchForm}>
                     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#6B2346" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={styles.searchIcon}>
                         <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
@@ -95,6 +95,7 @@ function SearchOverlay({ isOpen, onClose }) {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search for products..."
+                        className="search-overlay-input"
                         style={styles.input}
                         autoFocus
                     />
@@ -106,7 +107,7 @@ function SearchOverlay({ isOpen, onClose }) {
                 </form>
 
                 {/* Results */}
-                <div style={styles.resultsContainer}>
+                <div className="search-overlay-results" style={styles.resultsContainer}>
                     {loading && (
                         <div style={styles.loading}>
                             <div style={styles.spinner} />
@@ -184,6 +185,26 @@ function SearchOverlay({ isOpen, onClose }) {
                 @keyframes spin { to { transform: rotate(360deg); } }
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
                 @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                
+                @media (max-width: 768px) {
+                    .search-overlay-container {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        height: 100% !important;
+                        max-height: 100vh !important;
+                        margin: 0 !important;
+                        border-radius: 0 !important;
+                    }
+                    .search-overlay-form {
+                        padding: 14px 16px !important;
+                    }
+                    .search-overlay-results {
+                        padding: 14px 16px !important;
+                    }
+                    .search-overlay-input {
+                        font-size: 16px !important;
+                    }
+                }
             `}</style>
         </div>
     )

@@ -378,23 +378,25 @@
 
     .chatbot__window {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        max-height: 100%;
-        border-radius: 0;
-        transform: translateY(100%);
+        bottom: 80px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: calc(100% - 24px);
+        height: auto;
+        max-height: 460px;
+        border-radius: 16px;
+        transform: translateY(20px) scale(0.95);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     }
 
     .chatbot--open .chatbot__window {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 
     .chatbot__messages {
-        max-height: calc(100vh - 220px);
-        min-height: calc(100vh - 220px);
+        max-height: 230px;
+        min-height: 180px;
     }
 
     .chatbot__whatsapp-btn span:last-child {

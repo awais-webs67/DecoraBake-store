@@ -168,6 +168,25 @@ function About() {
                     .team-grid {
                         grid-template-columns: 1fr !important;
                     }
+                    .about-card {
+                        padding: 24px 20px !important;
+                    }
+                    .about-cms-card {
+                        padding: 24px 20px !important;
+                    }
+                }
+                @media (max-width: 480px) {
+                    .stats-grid {
+                        grid-template-columns: 1fr !important;
+                        gap: 12px !important;
+                    }
+                    .stats-item {
+                        border-right: none !important;
+                        border-bottom: 1px solid #f0f0f0 !important;
+                    }
+                    .stats-item:last-child {
+                        border-bottom: none !important;
+                    }
                 }
             `}</style>
 
@@ -256,7 +275,7 @@ function About() {
             {/* Custom Admin CMS Content (integrated seamlessly) */}
             {page?.content && (
                 <div style={{ maxWidth: '900px', margin: '60px auto 0', padding: '0 20px', position: 'relative', zIndex: 5 }}>
-                    <div style={{ background: '#fff', borderRadius: '24px', padding: '48px', boxShadow: '0 10px 30px rgba(107,35,70,0.03)', border: '1px solid #f0f0f0' }}>
+                    <div className="about-cms-card" style={{ background: '#fff', borderRadius: '24px', padding: '48px', boxShadow: '0 10px 30px rgba(107,35,70,0.03)', border: '1px solid #f0f0f0' }}>
                         <div style={{ fontSize: '16.5px', lineHeight: '1.85', color: '#444' }} dangerouslySetInnerHTML={{ __html: page.content }} />
                     </div>
                 </div>

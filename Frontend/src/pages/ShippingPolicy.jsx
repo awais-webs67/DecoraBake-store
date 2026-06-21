@@ -37,6 +37,16 @@ function ShippingPolicy() {
 
     return (
         <div style={{ background: '#fafafa', minHeight: '100vh' }}>
+            <style>{`
+                @media (max-width: 768px) {
+                    .returns-conditions-card {
+                        padding: 20px 16px !important;
+                    }
+                    .returns-cta-card {
+                        padding: 24px 16px !important;
+                    }
+                }
+            `}</style>
             {/* Hero */}
             <section style={{
                 background: 'linear-gradient(135deg, #0D4C3F 0%, #1A6B5A 50%, #2E8B6F 100%)',
@@ -72,24 +82,26 @@ function ShippingPolicy() {
             {/* Shipping Rates Table */}
             <section style={{ maxWidth: '900px', margin: '50px auto', padding: '0 20px' }}>
                 <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '28px', textAlign: 'center', marginBottom: '32px', color: '#222' }}>Shipping Options</h2>
-                <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 24px rgba(0,0,0,0.06)', border: '1px solid #f0f0f0' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: '#0D4C3F', color: '#fff', padding: '16px 24px', fontWeight: '600', fontSize: '14px' }}>
-                        <span>Method</span><span>Delivery Time</span><span>Cost</span>
-                    </div>
-                    {shippingOptions.map((opt, i) => (
-                        <div key={i} style={{
-                            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '20px 24px',
-                            borderBottom: i < shippingOptions.length - 1 ? '1px solid #f0f0f0' : 'none',
-                            alignItems: 'center'
-                        }}>
-                            <span style={{ fontWeight: '600', color: '#333', fontSize: '14px' }}>{opt.method}</span>
-                            <span style={{ color: '#666', fontSize: '14px' }}>{opt.time}</span>
-                            <div>
-                                <span style={{ fontWeight: '600', color: '#0D4C3F', fontSize: '15px' }}>{opt.cost}</span>
-                                {opt.free && <span style={{ display: 'block', fontSize: '12px', color: '#E65100', fontWeight: '600', marginTop: '2px' }}>{opt.free}</span>}
-                            </div>
+                <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+                    <div style={{ minWidth: '600px', background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', overflow: 'hidden' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: '#0D4C3F', color: '#fff', padding: '16px 24px', fontWeight: '600', fontSize: '14px' }}>
+                            <span>Method</span><span>Delivery Time</span><span>Cost</span>
                         </div>
-                    ))}
+                        {shippingOptions.map((opt, i) => (
+                            <div key={i} style={{
+                                display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '20px 24px',
+                                borderBottom: i < shippingOptions.length - 1 ? '1px solid #f0f0f0' : 'none',
+                                alignItems: 'center'
+                            }}>
+                                <span style={{ fontWeight: '600', color: '#333', fontSize: '14px' }}>{opt.method}</span>
+                                <span style={{ color: '#666', fontSize: '14px' }}>{opt.time}</span>
+                                <div>
+                                    <span style={{ fontWeight: '600', color: '#0D4C3F', fontSize: '15px' }}>{opt.cost}</span>
+                                    {opt.free && <span style={{ display: 'block', fontSize: '12px', color: '#E65100', fontWeight: '600', marginTop: '2px' }}>{opt.free}</span>}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
@@ -138,7 +150,7 @@ function ShippingPolicy() {
                 </div>
 
                 {/* Return Conditions */}
-                <div style={{ background: '#fff', borderRadius: '16px', padding: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: '1px solid #f0f0f0' }}>
+                <div className="returns-conditions-card" style={{ background: '#fff', borderRadius: '16px', padding: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: '1px solid #f0f0f0' }}>
                     <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '20px', marginBottom: '16px', color: '#222' }}>Return Conditions</h3>
                     <div style={{ color: '#555', fontSize: '14px', lineHeight: '1.8' }}>
                         {(content.returnConditions || '• Items must be unused and in original packaging\n• Returns must be initiated within 30 days of delivery\n• Perishable items and custom orders are not eligible for return\n• Sale items may only be exchanged, not refunded\n• Return shipping costs are the customer\'s responsibility unless the item is faulty\n• Refunds are processed to the original payment method').split('\n').map((line, j) => {
@@ -151,7 +163,7 @@ function ShippingPolicy() {
 
             {/* Contact CTA */}
             <section style={{ maxWidth: '700px', margin: '60px auto 80px', padding: '0 20px', textAlign: 'center' }}>
-                <div style={{ background: 'linear-gradient(135deg, #0D4C3F, #2E8B6F)', borderRadius: '20px', padding: '40px', color: '#fff' }}>
+                <div className="returns-cta-card" style={{ background: 'linear-gradient(135deg, #0D4C3F, #2E8B6F)', borderRadius: '20px', padding: '40px', color: '#fff' }}>
                     <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '24px', marginBottom: '12px' }}>Have Questions?</h3>
                     <p style={{ fontSize: '15px', opacity: 0.9, marginBottom: '24px' }}>Our team is here to help with any shipping or return questions.</p>
                     <Link to="/contact" style={{

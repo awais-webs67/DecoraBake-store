@@ -147,6 +147,9 @@ function Terms() {
                         position: static !important;
                         margin-bottom: 20px;
                     }
+                    .terms-card {
+                        padding: 20px 16px !important;
+                    }
                     .terms-hero {
                         grid-template-columns: 1fr !important;
                         text-align: center !important;

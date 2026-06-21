@@ -35,8 +35,8 @@ function ChatBot() {
     }, [messages])
 
     const sendMessage = async (directMessage) => {
-        const messageText = directMessage || inputValue
-        if (!messageText.trim() || isLoading) return
+        const messageText = (directMessage && typeof directMessage === 'string') ? directMessage : inputValue
+        if (!messageText || !messageText.trim() || isLoading) return
 
         const userMessage = { id: Date.now(), type: 'user', text: messageText }
         setMessages(prev => [...prev, userMessage])

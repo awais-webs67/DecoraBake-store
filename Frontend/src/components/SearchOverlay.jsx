@@ -79,16 +79,16 @@ function SearchOverlay({ isOpen, onClose }) {
         setRecentSearches([])
     }
 
-    if (!isOpen) return null
-
     return (
-        <div className="search-overlay" style={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
+        <div className="search-overlay" style={{ ...styles.overlay, display: isOpen ? 'block' : 'none' }} onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div className="search-overlay-container" style={styles.container}>
                 {/* Search Input */}
                 <form onSubmit={handleSubmit} className="search-overlay-form" style={styles.searchForm}>
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#6B2346" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={styles.searchIcon}>
-                        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
+                    <button type="submit" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: '#6B2346' }} title="Search">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={styles.searchIcon}>
+                            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                    </button>
                     <input
                         ref={inputRef}
                         type="text"
@@ -97,7 +97,7 @@ function SearchOverlay({ isOpen, onClose }) {
                         placeholder="Search for products..."
                         className="search-overlay-input"
                         style={styles.input}
-                        autoFocus
+                        autoFocus={isOpen}
                     />
                     <button type="button" onClick={onClose} style={styles.closeBtn}>
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">

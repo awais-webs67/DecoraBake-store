@@ -650,6 +650,31 @@ app.get('/api/products', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }) }
 })
 
+app.get('/api/search', async (req, res) => {
+    try {
+        const { q } = req.query
+        if (!q) return res.json([])
+        const products = await Product.find({
+            enabled: { $ne: false },
+            $or: [
+                { name: { $regex: q, $options: 'i' } },
+                { description: { $regex: q, $options: 'i' } }
+            ]
+        }).limit(10).lean()
+
+        const mapped = products.map(p => {
+            const firstImage = p.images?.[0] || p.image
+            return {
+                ...p,
+                id: p._id.toString(),
+                image: getImageUrl(firstImage),
+                images: (p.images || []).map(img => getImageUrl(img))
+            }
+        })
+        res.json(mapped)
+    } catch (err) { res.status(500).json({ error: err.message }) }
+})
+
 app.get('/api/products/:id', async (req, res) => {
     try {
         if (!req.params.id || req.params.id === 'undefined') return res.status(400).json({ error: 'Invalid product ID' })

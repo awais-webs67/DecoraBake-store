@@ -291,6 +291,7 @@
     padding: 12px 14px;
     background: white;
     border-top: 1px solid #f0f0f0;
+    box-sizing: border-box;
 }
 
 .chatbot__input input {
@@ -301,6 +302,8 @@
     font-size: 0.85rem;
     outline: none;
     transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    min-width: 0;
 }
 
 .chatbot__input input:focus {
@@ -320,6 +323,7 @@
     justify-content: center;
     transition: all 0.2s ease;
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .chatbot__input button:hover:not(:disabled) {
